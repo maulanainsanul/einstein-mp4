@@ -1,0 +1,266 @@
+EINSTEIN: KISAH YANG SEBENARNYA (EDISI EKSEKUSI 2.5D HD)
+Paket Produksi Animasi 2.5D Volumetrik (Gaya Referensi Seri Newton) · 14 Episode (56 Scene) · Rasio 9:16 (1080×1920)
+Nada Kekinian, Humor Satir Tipis-Tipis Birokrasi & Pemerintahan, Seluruh Episode Berakhir Cliffhanger
+  1. KONSEP VISUAL 2.5D VOLUMETRIK & UI LAYAR (ALA REFERENSI)
+Dokumen ini telah disesuaikan 100% agar mudah diparsing oleh Google AI Studio untuk menghasilkan web generator video MP4 otomatis yang meniru kualitas visual 2.5D bervolume seperti referensi seri Newton, lengkap dengan humor kekinian dan sindiran satir halus soal birokrasi, ordal, aturan kaku, dan kebijakan publik.
+Komponen Teknis	Spesifikasi Eksekusi Google AI Studio
+Gaya Visual (2.5D Clay/Toy Volumetrik)	Bukan 2D datar yang kaku. Karakter chibi (kepala 1/3 tinggi badan ±170px, tinggi total ±520px) dan properti dirender memakai radial gradient shading, specular highlight (kilau cahaya), cel-shading dalam, rim-light, serta soft drop shadow sehingga tampak bulat bervolume seperti boneka 3D di panggung 2.5D (multi-layer parallax) berlatar papan tulis fisika gelap (#0F1B2D) dengan tekstur butiran kapur dan partikel cahaya melayang.
+Palet Warna & Pencahayaan	Navy Papan Tulis #0F1B2D (variasi #1B2D4A, #24395C) · Putih Kapur #F5F5F0 · Kuning Einstein #FFD60A (rambut, sorotan ide jenius, dan highlight subtitle aktif) · Biru Listrik #2D9CFF · Pink Notif #FF3D81 · Hijau Centang #17BF63.
+UI Layar & Subtitle Karaoke	1) Pill Header Kiri Atas (x=60, y=150): kapsul gelap bertuliskan 'EINSTEIN • EPISODE [X]'.
+2) Subtitle Dinamis Kata-demi-Kata (y=1560, di atas zona aman 250px): tampil per frasa (maks 5–6 kata) font sans-serif tebal putih dengan bayangan hitam tajam dan sorotan kuning #FFD60A secara real-time mengikuti kata yang diucapkan dubbing.
+3) Gelembung Dialog Timbul: ucapan tokoh muncul dalam gelembung putih bervolume di dekat kepala (mulut tokoh tetap tertutup saat narator bicara).
+4) Tulisan Tangan / Kapur Real-Time: setiap rumus/tanggal ditulis huruf demi huruf dengan ujung kapur/pena bergerak.
+Format, Kamera & Safe Zone	Vertikal 9:16 (1080×1920), render 30fps mulus (karakter gerak snappy 12fps-style dengan interpolasi spring physics & idle breathing). Zona aman: sisakan 150px atas dan 250px bawah (area aksi y=150–1670). Kamera 2.5D parallax: slow zoom-in, dolly pan, tilt, dan 'zoom kaget' 115% saat plot twist/satir.
+Transisi & Pola Cliffhanger Scene 4	Antar scene: transisi sobekan kertas/swipe-up atau glitch cepat (6–12 frame). Pola Scene 4 (semua episode): 0–7 dtk narasi awal; 7–11 dtk kartu timbul 'Cek Fakta ✔' (Spill Fakta) di y=1320–1480 selama 4 dtk; 11–14 dtk zoom-in ke benda kunci saat kalimat gantung (Speed 0.85); 14–15 dtk layar memudar hitam pekat (fade to black), musik berhenti menggantung, hening total 1 dtk, muncul stempel kotak merah miring 'BERSAMBUNG…' di tengah layar (y=960) dan tombol 'Episode berikutnya ▶'.
+Sinkronisasi Otomatis Dubbing	Target standar 15 dtk/scene (60 dtk/episode), namun durasi video 100% fleksibel mengikuti file MP3/WAV dubbing yang diunggah user (jika audio 50 dtk, video otomatis 50 dtk). Seluruh keyframe Alur per detik dan kata pemicu [dalam kurung siku] dipetakan proporsional. Audio mix: Narasi 0 dB, BGM lo-fi -18 dB (auto-ducking -6 dB saat narasi bicara), SFX -10 dB.
+
+  2. RIGGING KARAKTER 2.5D & PUSTAKA 12 LATAR INDUK
+Aset Karakter (Rig 2.5D)	Ciri Visual, Properti & Kemunculan
+1. Albert Bocah (3–15 thn)	Ep 1–3 | Kepala besar bulat-persegi, rambut hitam ikal bervolume, pipi bulat kemerahan, kemeja putih, rompi, celana pendek, kaus kaki panjang. Properti: biola kecil, kompas saku, buku geometri.
+2. Albert Remaja/Mahasiswa (16–21 thn)	Ep 3–5 | Tubuh ramping, rambut hitam berombak tebal, alis tebal, kemeja kusut tanpa dasi, jaket lusuh, ransel kain.
+3. Albert Pegawai Paten (22–30 thn)	Ep 5–7 | Berkumis tipis, rambut hitam lebat, jas murah agak kebesaran bervolume, dasi miring, rompi, meja berlaci rahasia.
+4. Albert Profesor Berlin (35–47 thn)	Ep 8–12, 14 S1 | Rambut tebal acak bervolume dengan kilau kuning #FFD60A (lebih kelabu di Ep 14 S1), kumis lebat, kantung mata, kacamata baca tergantung di leher, kapur.
+5. Albert Tua Princeton (54–76 thn)	Ep 12–14 | Rambut putih menyala acak, kumis putih tebal, sweter longgar bertekstur, celana lusuh, pipa, perahu layar kecil.
+6. Tokoh Utama Pendamping	Mileva Marić (sanggul hitam, gaun biru tua, buku catatan, Ep 5–9, 12) · Marcel Grossmann (kacamata bulat, jas biru gelap, catatan super rapi, Ep 4–5, 9) · Keluarga (Pauline, Hermann, Maja, Paman Jakob, Ep 1–3) · Dosen ETH (Minkowski & Weber, Ep 4–5) · Arthur Eddington (jas tropis krem, topi pith, teleskop, Ep 10–11).
+7. Figuran Sejarah & Tambahan	Elsa, Max Planck, Leo Szilard, Presiden Roosevelt (kursi roda, pince-nez), Max Talmey, guru kelas, kepala sekolah, dokter, direktur ETH, keluarga Winteler, Solovine & Habicht, bayi/anak Hans Albert, Michele Besso, David Hilbert, Lise Meitner, Edwin Hubble, lawan debat, serta figuran tanpa wajah (siluet navy bervolume bermata dua putih).
+8. Maskot & Narator	Foton (bola cahaya kuning bercahaya 3D bermata dua & ekor kilat) · Si Kompas (kompas saku 3D bermata dengan jarum bergetar) · Kak Netijen (tokoh fiksi berkepala gelembung chat 3D, kacamata hitam, headset, jempol raksasa, smartphone) · Sang Penutur (ikon mikrofon sudut kiri atas dengan equalizer kuning real-time mengikuti amplitudo MP3).
+
+ID Latar Induk (2.5D Parallax)	Varian & Adegan Penggunaan
+L-01 Rumah & Kamar	Ep 1–3, Ep 12 S2 | Kamar bersalin Ulm, ruang makan Munich (piano), kamar anak, kamar sakit, kamar belajar malam, kamar kos sempit hujan, ruang tamu meja kayu.
+L-02 Sekolah & Aula Ujian	Ep 2–3 | Kelas Munich dingin bergaya militer, ruang kepala sekolah, ruang dokter (selipan 1 dtk), aula ujian Zurich tinggi berbaris.
+L-03 Alam Terbuka	Ep 3 S3, Ep 4 S3 | Pegunungan Italia (3 lapis gunung paralaks + kereta api siluet), taman sekolah Aarau (bukit hijau cerah, langit biru, tulisan kapur 'c').
+L-04 ETH & Kafe Zurich	Ep 4–5 | Ruang administrasi (papan nilai), ruang direktur, ruang kuliah kecil (5 bangku), kafe Zurich hangat (uap kopi), ruang dosen, gerbang batu ETH.
+L-05 Bern: Kantor Paten & Apartemen	Ep 6–9 S1 | Fasad kantor paten, meja kerja & jendela menara jam, apartemen Akademi Olympia (sosis, teh, buku, keranjang bayi), laci rahasia, kantor senja, kantor 1907 (tukang atap melayang).
+L-06 Papan Tulis Konsep	Ep 7–11, 13–14 | Papan 1905, meja mikroskop, papan satu persamaan 'E = mc²', dua kartu aturan, papan penuh coretan, papan kusut tensor, papan tanda silang 1913/v2, split Berlin–Göttingen, papan data 1919, papan fisi uranium, ruang debat dadu raksasa.
+L-07 Langit & Kosmos	Ep 8 S2, Ep 10, Ep 14 S2 | Split jam bumi vs roket, orbit Merkurius cemberut + angka '43', langit gerhana Matahari korona kuning, galaksi mengembang + simbol Λ.
+L-08 Aula Formal	Ep 10 S2, Ep 11 S3, Ep 13 S3 | Aula Akademi Prusia (kalender 4 Kamis), Royal Society London (koran terbang), Ruang Oval Gedung Putih.
+L-09 Peta, Laut & Pulau	Ep 3 S1, Ep 9 S2, Ep 11, Ep 12 S1 | Peta Jerman–Italia, peta Eropa (Zurich–Praha–Berlin), peta Atlantik, Pulau Principe (hujan kapur berhenti detik ±8), dek kapal senja.
+L-10 Jalan Kota	Ep 5 S4, Ep 12 S3–S4 | Jalan Zurich bersalju (amplop penolakan), split Jepang meriah vs Berlin gelap, pelabuhan 1933 (kapal & api buku jauh).
+L-11 Princeton	Ep 13 S1 & S4, Ep 14 S4 | Kampus Princeton musim gugur daun jatuh, danau perahu layar kecil, ruang kerja malam dengan radio.
+L-12 Layar & Observatorium	Ep 14 S3–S4 | Layar ponsel raksasa feed kutipan hoaks, ruang kendali observatorium gelombang gravitasi.
+
+  3. NASKAH LENGKAP 14 EPISODE (HUMOR KEKINIAN & SATIR TIPIS-TIPIS)
+EPISODE 1 — Einstein: Bayi Berkepala Kebesaran
+Mitos Diluruskan: Orang jenius pasti terlihat hebat sejak bayi.  |  Frame Akhir: Jarum kompas bergetar (fade to black, hening 1 dtk, stempel BERSAMBUNG…).
+Scene	Arahan Visual, Kamera & Alur Per Detik	Teks Dubbing (Humor + Satir Tipis)	Pop-up, Spill Fakta & Audio
+S1 (0:00–0:15)
+Ulm yang Tenang	L-01 Kamar Bersalin | Zoom-in jendela ke ranjang. 0–3 dtk: kapur tulis '14.03.1879' [empat belas Maret]. 3–8 dtk: Pauline (kiri) gendong Albert bayi, Hermann (kanan) garuk kepala. 8–11 dtk: kepala bayi membesar komikal [kepalanya kebesaran, aneh]. 11–15 dtk: pop-up layu jadi '0 penayangan' [cuma bayi biasa].	Ulm, Jerman, empat belas Maret seribu delapan ratus tujuh puluh sembilan. <break time="0.4s" /> Lahirlah bayi bernama Albert. Plot twist: kepalanya kebesaran dan bentuknya aneh, sampai ibunya cemas. <break time="0.4s" /> Nggak ada petir, nggak ada karpet merah ala pejabat baru dilantik. Cuma bayi biasa.	Pop-up: TRENDING #1 → 0 PENAYANGAN
+Musik/SFX: Lo-fi lembut, tangis bayi, kapur menggores.
+S2 (0:15–0:30)
+Loading…	L-01 Ruang Makan Munich | Dolly Pauline ke Albert kecil (tengah). 0–4 dtk: Albert diam [umur dua, tiga tahun]. 4–8 dtk: bibir komat-kamit tanpa suara [merapal pelan-pelan]. 8–12 dtk: keluarga panik [panik]. 12–15 dtk: ikon loading 99% berputar di atas kepala Albert [loading].	Umur dua, tiga tahun, Albert belum lancar bicara. <break time="0.4s" /> Konon ia merapal kalimat pelan-pelan dulu di kepala sebelum diucapkan. <break time="0.4s" /> Keluarganya panik. Padahal Albert cuma lagi… loading. Beda sama rapat anggaran yang seringnya malah nge-hang.	Pop-up: LOADING 99%...
+Musik/SFX: Piano ringan, SFX 'tuuung' loading.
+S3 (0:30–0:45)
+Mana Rodanya?	L-01 Kamar Anak | Whip pan ke bayi Maja. 0–4 dtk: Pauline kenalkan Maja ke Albert [dijanjikan mainan baru]. 4–8 dtk: Albert ngolong cari roda di bawah kasur [mana rodanya?]. 8–11 dtk: Maja menangis kecil, Albert mikir [mengira adik itu mainan beroda]. 11–15 dtk: pop-up perbandingan [ekspektasi versus realita].	Saat adiknya, Maja, lahir, Albert dijanjikan mainan baru. <break time="0.4s" /> Reaksinya bukan terharu, tapi nanya: mana rodanya? <break time="0.5s" /> Ia mengira adik itu mainan beroda. Jenius? Belum. Baru ekspektasi versus realita. Mirip janji kampanye pas baliho masih baru.	Pop-up: EKSPEKTASI vs REALITA
+Musik/SFX: Bass playful, SFX 'plop' roda.
+S4 (0:45–1:00)
+Jarum Misterius	L-01 Kamar Sakit | 0–7 dtk: Hermann beri kompas saku ke Albert 5 thn di ranjang [ayahnya memberi kompas]; jarum selalu balik ke utara; Foton muncul di kanan atas. 7–11 dtk: kartu Spill Fakta (4 dtk). 11–14 dtk: zoom-in ke kompas [Siapa yang menggerakkannya?] (Speed 0.85). 14–15 dtk: cliffhanger standar.	Lalu, di umur lima tahun, ayahnya memberi kompas saku. <break time="0.4s" /> Jarumnya bergerak lurus tanpa disentuh siapa pun. <break time="0.5s" /> Tak terlihat. Tak tersentuh. Siapa yang menggerakkannya?	Spill Fakta: Einstein mengenang kompas umur lima tahun itu sebagai kesan mendalam pertama tentang keajaiban alam.
+Musik/SFX: Berhenti menggantung, SFX 'tik' jarum, hening 1 dtk.
+
+EPISODE 2 — Einstein dan Buku Suci Geometri
+Mitos Diluruskan: Einstein pernah gagal pelajaran matematika.  |  Frame Akhir: Pintu kelas terbuka dengan celah cahaya putih (BERSAMBUNG…).
+Scene	Arahan Visual, Kamera & Alur Per Detik	Teks Dubbing (Humor + Satir Tipis)	Pop-up, Spill Fakta & Audio
+S1 (0:00–0:15)
+Biola vs Hafalan	SPLIT SCREEN x=540: Kiri L-02 Kelas Munich (dingin) vs Kanan L-01 Ruang Musik (hangat). 0–4 dtk: kanan Albert main biola [jatuh cinta pada Mozart]. 4–9 dtk: kiri Albert berdiri kaku dimarahi guru [bosan: hafalan, baris-berbaris]. 9–15 dtk: pop-up skor [Musik sepuluh, hafalan nol].	Umur enam tahun, Albert mulai belajar biola, dan jatuh cinta pada Mozart. <break time="0.4s" /> Di sekolah, ia bosan setengah mati: isinya cuma hafalan, baris-berbaris, dan guru galak. <break time="0.4s" /> Skornya: musik sepuluh, hafalan nol. Untung zaman itu belum ada tes wawasan kebangsaan buat main biola.	Pop-up: MUSIK 10/10 · HAFALAN 0/10
+Musik/SFX: Biola dipotong 'record scratch', langkah tegap.
+S2 (0:15–0:30)
+Dua Mentor Tak Resmi	L-01 Ruang Makan Malam | Pan Paman Jakob ke Max Talmey. 0–8 dtk: Jakob gambar kotak X berubah jadi hewan buruan [berburu binatang bernama iks]. 8–15 dtk: Talmey (jas lusuh) bawa tumpukan buku sains, Albert memeluk buku [langsung nagih].	Dua mentor tak resmi muncul. <break time="0.4s" /> Paman Jakob bilang, aljabar itu berburu binatang misterius bernama iks. <break time="0.4s" /> Lalu Max Talmey, mahasiswa kedokteran pas-pasan yang tiap Kamis datang bawa buku sains. Albert langsung nagih. Kurikulumnya jalan terus tanpa perlu ganti menteri.	Pop-up: Paman Jakob: Ayo berburu X 🏹
+Musik/SFX: Lo-fi playful, halaman dibalik, 'ting'.
+S3 (0:30–0:45)
+Buku Kecil yang Suci	L-01 Kamar Belajar Malam | Zoom-in halaman buku Euclid ke mata Albert 12 thn. 4–8 dtk: segitiga kapur menari di dinding. 8–12 dtk: rumus integral menggulung [menguasai kalkulus]. 12–15 dtk: Albert naikkan satu alis ke kamera [gagal matematika? Hmm].	Umur dua belas, Albert menemukan buku geometri Euclid. Ia menyebutnya buku kecil yang suci. <break time="0.4s" /> Menurut kenangannya, sebelum umur lima belas ia sudah menguasai kalkulus secara otodidak. <break time="0.4s" /> Jadi, gosip dia gagal matematika? Hmm, validitasnya setara berita hoaks grup keluarga.	Pop-up: MATEMATIKA: SELESAI ✔
+Musik/SFX: Piano naik, kapur menggores, 'ding'.
+S4 (0:45–1:00)
+Kehadiranmu Mengganggu	L-02 Kelas Munich | 0–7 dtk: guru gebrak meja menunjuk Albert yang duduk santai [Mitos viral itu hoaks…]. 7–11 dtk: kartu Spill Fakta (4 dtk). 11–14 dtk: tilt up guru menunjuk pintu [kehadiran Albert merusak kelas. Lalu, apa yang terjadi?] (Speed 0.85). 14–15 dtk: cliffhanger pintu terbuka.	Mitos viral itu hoaks, dan Einstein sendiri pernah membantahnya. <break time="0.4s" /> Tapi kepintaran yang terlalu kritis memang punya musuh di sistem yang kaku. <break time="0.5s" /> Seorang gurunya bilang kehadiran Albert saja sudah merusak kelas. Lalu, apa yang terjadi?	Spill Fakta: Pada 1935 Einstein membantah klaim itu: ia tak pernah gagal matematika.
+Musik/SFX: Gebrak meja, berhenti menggantung, hening 1 dtk.
+
+EPISODE 3 — Einstein Resign dari Sekolah
+Mitos Diluruskan: Einstein dikeluarkan dari sekolah karena bodoh.  |  Frame Akhir: Lembar soal ujian ETH kosong dengan tanda tanya kapur (BERSAMBUNG…).
+Scene	Arahan Visual, Kamera & Alur Per Detik	Teks Dubbing (Humor + Satir Tipis)	Pop-up, Spill Fakta & Audio
+S1 (0:00–0:15)
+Ditinggal di Munich	L-01 Kamar Kos Hujan → L-09 Peta Jerman–Italia | 0–5 dtk: Albert 15 thn duduk di kasur sempit, hujan deras di jendela [pindah ke Italia]. 5–12 dtk: zoom-out ke peta, keluarga jalan ke Italia, Albert ditinggal [ditinggal di Munich]. 12–15 dtk: pop-up merah [Red flag semua].	Umur lima belas, bisnis listrik keluarganya pindah ke Italia. <break time="0.4s" /> Albert ditinggal sendirian di Munich buat menamatkan sekolah. <break time="0.4s" /> Bayangkan: anak remaja ditinggal di kosan, di sekolah semi-militer yang dia benci. Red flag semua.	Pop-up: 🚩 RED FLAG x3
+Musik/SFX: Piano melankolis, rintik hujan.
+S2 (0:15–0:30)
+Resign Elegan	L-02 Ruang Kepala Sekolah (selipan 1 dtk Ruang Dokter) | 0–7 dtk: surat dokter 'kelelahan saraf' diserahkan [surat dokter]. 7–11 dtk: kepala sekolah angguk lega. 11–15 dtk: Albert melambai santai melenggang keluar [resign elegan].	Solusi kreatifnya: surat dokter. <break time="0.4s" /> Katanya ia butuh istirahat karena kelelahan saraf. <break time="0.4s" /> Gurunya yang memang sudah pusing langsung setuju. Albert pergi tanpa ijazah. Ini bukan dikeluarkan. Ini namanya resign elegan sebelum di-PHK.	Pop-up: SURAT DOKTER: DISETUJUI ✔
+Musik/SFX: Beat santai, stempel 'ceklek'.
+S3 (0:30–0:45)
+Healing di Italia	L-03 Pegunungan Italia (3 lapis paralaks cerah) | 0–4 dtk: Albert 16 thn mendaki gunung [mendaki gunung]. 4–8 dtk: nulis esai medan magnet di rumput. 8–11 dtk: kertas bendera Jerman terbang [melepas kewarganegaraan Jerman]. 11–15 dtk: keluarga melongo [Karier? Belum ada].	Di Italia, Albert hidup santai: mendaki gunung, jalan-jalan, sambil menulis esai kecil soal medan magnet. <break time="0.4s" /> Tak lama, ia resmi melepas kewarganegaraan Jerman di umur enam belas. <break time="0.4s" /> Tanpa ijazah, tanpa paspor negara. Karier? Belum ada. Tapi mentalnya aman.	Pop-up: STATUS: HEALING 🌿 · PASPOR: –
+Musik/SFX: Akustik ceria, burung berkicau.
+S4 (0:45–1:00)
+Dua Tahun Terlalu Muda	L-02 Aula Ujian Zurich | 0–7 dtk: Albert 16 thn paling kecil di antara peserta dewasa [dua tahun lebih muda]. 7–11 dtk: kartu Spill Fakta (4 dtk). 11–14 dtk: zoom-in ke lembar soal [Hasilnya? Hasilnya…] (Speed 0.85). 14–15 dtk: cliffhanger tanda tanya kapur.	Ayahnya tegas: kamu harus kuliah teknik biar masa depan jelas. <break time="0.4s" /> Albert pun nekat ikut ujian masuk ETH Zurich, padahal usianya dua tahun lebih muda dari semua pesaing. <break time="0.5s" /> Hasilnya? Hasilnya…	Spill Fakta: Albert mengikuti ujian ETH Zurich dua tahun lebih muda dari peserta lain.
+Musik/SFX: Detak jam dinding, berhenti menggantung.
+
+EPISODE 4 — Einstein Gagal Ujian Masuk
+Mitos Diluruskan: Einstein langsung lolos universitas top tanpa hambatan.  |  Frame Akhir: Bangku kosong di ruang kuliah ETH (BERSAMBUNG…).
+Scene	Arahan Visual, Kamera & Alur Per Detik	Teks Dubbing (Humor + Satir Tipis)	Pop-up, Spill Fakta & Audio
+S1 (0:00–0:15)
+Nilai Ambyar	L-04 Administrasi ETH | Zoom-in lembar nilai: Matematika & Fisika bersinar kuning [nilai tinggi], Prancis & Biologi berasap abu-abu [ambyar]. 11–15 dtk: Kak Netijen muncul ketik komentar [gagal masuk ETH].	Hasil ujian keluar. Matematika dan fisika: nilai tinggi. <break time="0.4s" /> Bahasa Prancis, sastra, dan biologi: ambyar. <break time="0.4s" /> Albert gagal masuk ETH. Plot twist buat yang percaya jenius itu harus jago semua mata pelajaran kayak seleksi CPNS.	Pop-up: GAGAL (SEBAGIAN) ❌ + Komentar Kak Netijen
+Musik/SFX: Lo-fi dipotong 'record scratch'.
+S2 (0:15–0:30)
+Saran dari Direktur	L-04 Ruang Direktur → Rumah Winteler | 0–8 dtk: direktur kagum lihat nilai fisika, sodorkan brosur hijau Aarau [SMA-mu di Aarau]. 8–15 dtk: keluarga Winteler melambai ramah, papan kapur 'boleh bertanya' [boleh banyak bertanya].	Direktur ETH justru terkesan dengan nilai fisikanya. <break time="0.4s" /> Sarannya: selesaikan dulu SMA-mu di Aarau, Swiss. <break time="0.4s" /> Albert pun ngekos di keluarga Winteler. Sekolah barunya santai dan demokratis: murid boleh banyak bertanya tanpa dicap pembangkang.	Pop-up: REKOMENDASI: PINDAH SEKOLAH ✔
+Musik/SFX: Akustik hangat, langkah kaki.
+S3 (0:30–0:45)
+Mengejar Cahaya	L-03 Taman Aarau | 0–8 dtk: Albert berbaring di rumput, Foton melesat lewat [mengejar seberkas cahaya]. 8–12 dtk: Albert ikut berlari sejajar Foton. 12–15 dtk: garis kapur 'c' menulis diri di langit [kelak jadi relativitas].	Di Aarau, umur enam belas, Albert iseng berpikir: bagaimana kalau aku mengejar seberkas cahaya dengan kecepatan cahaya itu sendiri? <break time="0.4s" /> Apa yang akan kulihat? <break time="0.5s" /> Pertanyaan iseng pas lagi bengong ini, kelak, melahirkan teori relativitas.	Pop-up: PERTANYAAN ISENG #1 💡
+Musik/SFX: Synth naik, SFX 'whoosh' Foton.
+S4 (0:45–1:00)
+Kembali ke ETH	L-04 Gerbang ETH | 0–7 dtk: tilt up tangga gerbang, Albert 17 thn melangkah masuk [diterima di ETH]. 7–11 dtk: kartu Spill Fakta (4 dtk). 11–14 dtk: zoom-in ke kafe hangat di seberang jalan [bangku siapa yang selalu kosong] (Speed 0.85). 14–15 dtk: cliffhanger bangku kosong.	Satu tahun kemudian, Albert lulus ujian akhir Aarau dan akhirnya diterima di ETH Zurich. <break time="0.4s" /> Tapi ia punya satu kebiasaan buruk. <break time="0.5s" /> Dan para dosennya mulai hapal… bangku siapa yang selalu kosong.	Spill Fakta: Di sekolah Aarau, nilai enam adalah yang tertinggi; salah paham skala nilai diduga ikut melahirkan mitos 'gagal matematika'.
+Musik/SFX: Bel kampus, berhenti menggantung.
+
+EPISODE 5 — Einstein, Mahasiswa Bolos
+Mitos Diluruskan: Orang jenius pasti mahasiswa teladan yang rajin duduk di kelas.  |  Frame Akhir: Amplop berstempel 'KANTOR PATEN BERN' membesar (BERSAMBUNG…).
+Scene	Arahan Visual, Kamera & Alur Per Detik	Teks Dubbing (Humor + Satir Tipis)	Pop-up, Spill Fakta & Audio
+S1 (0:00–0:15)
+Lima Mahasiswa	L-04 Ruang Kuliah Kecil | Zoom-out papan '1896' ke lima bangku. Albert & Mileva Marić diskusi serius, garis kapur hijau hubungkan buku mereka [duo diskusi paling serius].	ETH Zurich, seribu delapan ratus sembilan puluh enam. <break time="0.4s" /> Di jurusan guru fisika dan matematika cuma ada segelintir mahasiswa. Satu-satunya perempuan: Mileva Marić, asal Serbia. <break time="0.4s" /> Mereka langsung klik, jadi duo diskusi paling serius di kelas.	Pop-up: DUO DISKUSI BARU 💞
+Musik/SFX: Lo-fi hangat, kapur menggores.
+S2 (0:15–0:30)
+Sang Penyelamat Catatan	L-04 Kafe Zurich | 0–4 dtk: Albert santai ngopi [belajar di kafe]. 4–8 dtk: selipan 1 dtk bangku kelas kosong [Bolos]. 8–15 dtk: Marcel Grossmann sodorkan catatan super rapi [pahlawan tanpa tanda jasa].	Albert lebih suka belajar di kafe dan laboratorium daripada duduk dengerin ceramah di kelas. <break time="0.4s" /> Kuliah membosankan? Bolos. Catatannya? Pinjam dari Marcel Grossmann, teman baik yang tulisannya rapi banget. <break time="0.4s" /> Marcel: pahlawan tanpa tanda jasa sebelum ada fotokopian kampus.	Pop-up: KEHADIRAN: 0% · CATATAN: 100% ✔
+Musik/SFX: Beat santai, gelas kopi beradu.
+S3 (0:30–0:45)
+Kamu Anak Pintar, Tapi…	L-04 Ruang Dosen | Whip pan Minkowski (kiri) ke Weber (kanan), Albert nyengir di tengah [tak mau diberi tahu apa pun]. 12–15 dtk: Kak Netijen muncul berkomentar.	Profesor Minkowski konon menjulukinya si pemalas. <break time="0.4s" /> Profesor Weber bilang: kamu anak pintar, tapi punya satu kekurangan fatal. <break time="0.4s" /> Kamu tak mau diberi tahu apa pun. Albert cuma nyengir. Ini memang bukan kisah mahasiswa teladan kesayangan rektorat.	Pop-up: Kak Netijen: Relate banget 😭
+Musik/SFX: Bass playful, helaan napas dosen.
+S4 (0:45–1:00)
+Lulus, Lalu Menganggur	L-10 Jalan Zurich Bersalju | 0–7 dtk: tilt down salju turun, amplop penolakan melayang ke Albert [tak ada universitas yang mau]. 7–11 dtk: kartu Spill Fakta (4 dtk). 11–14 dtk: amplop terakhir berstempel 'Kantor Paten' [kantor paten?] (Speed 0.85). 14–15 dtk: cliffhanger stempel.	Albert lulus tahun seribu sembilan ratus, tapi tak ada satu pun universitas yang mau menjadikannya asisten. <break time="0.4s" /> Dua tahun menganggur, jadi guru les, hidup irit. Nggak punya orang dalam memang berat. <break time="0.5s" /> Sampai datang tawaran dari tempat yang tak terduga… kantor paten?	Spill Fakta: Albert lulus pada 1900, tetapi tidak ditawari posisi asisten di universitas.
+Musik/SFX: Amplop disobek, berhenti menggantung.
+
+EPISODE 6 — Einstein dan Kantor Paten
+Mitos Diluruskan: Penemuan besar harus lahir dari laboratorium megah berdana triliunan.  |  Frame Akhir: Surat ke Habicht bertuliskan '4 karya' dengan stempel 1905 (BERSAMBUNG…).
+Scene	Arahan Visual, Kamera & Alur Per Detik	Teks Dubbing (Humor + Satir Tipis)	Pop-up, Spill Fakta & Audio
+S1 (0:00–0:15)
+Ahli Teknis Kelas Tiga	L-05 Fasad & Kantor Paten Bern | Zoom-in plakat ke meja kecil Albert 23 thn. Papan nama 'Ahli Teknis Kelas III' [Cuma kelas tiga]. Marcel kecil melambai di pojok.	Bern, Swiss, Juni seribu sembilan ratus dua. <break time="0.4s" /> Berkat rekomendasi ayah Marcel Grossmann, akhirnya jalur ordal jalur langit bekerja: Albert diterima di kantor paten. <break time="0.4s" /> Jabatannya: ahli teknis kelas tiga. Bukan profesor. Bukan peneliti. Cuma kelas tiga.	Pop-up: JABATAN: AHLI TEKNIS KELAS III
+Musik/SFX: Lo-fi kantor, ketikan mesin tik.
+S2 (0:15–0:30)
+Jam Stasiun & Pikiran Liar	L-05 Meja & Jendela Menara Jam | Dolly dari berkas alat penyelaras jam ke menara jam Bern. Jarum dua jam berdetak tak serempak [bersamaan itu sebenarnya apa?].	Kerjanya menilai paten ide orang lain: alat listrik dan penyelaras jam. <break time="0.4s" /> Di Bern, jam-jam stasiun memang disinkronkan lewat sinyal listrik. <break time="0.4s" /> Konon di depan berkas birokrasi itu ia mulai bertanya: waktu yang bersamaan itu sebenarnya apa?	Pop-up: PERTANYAAN ISENG #2: SIMULTAN?
+Musik/SFX: Synth tik-tok, detak jam berganda.
+S3 (0:30–0:45)
+Akademi Olympia	L-05 Apartemen Olympia | Pan melingkar meja bundar berisi sosis, teh, buku. Albert, Solovine, Habicht berdebat seru; Mileva mengoreksi hitungan; bayi Hans Albert tidur [ide-idenya meledak].	Malamnya, Albert punya geng nongkrong: Akademi Olympia. <break time="0.4s" /> Anggotanya cuma tiga: Albert, Maurice Solovine, dan Conrad Habicht. Menunya sosis murah, teh, dan buku filsafat. <break time="0.4s" /> Tanpa lab, tanpa anggaran penelitian miliaran. Tapi ide-idenya meledak.	Pop-up: 3 ANGGOTA · 0 DANA · ∞ IDE
+Musik/SFX: Beat akustik, gelas dentingan.
+S4 (0:45–1:00)
+Laci Fisika Teoretis	L-05 Laci Rahasia | 0–7 dtk: siluet atasan lewat, Albert sembunyikan kertas rumus ke laci lalu buka lagi [departemen fisika teoretis pribadi]. 7–11 dtk: kartu Spill Fakta (4 dtk). 11–14 dtk: Albert menulis surat 'Mei 1905' [Apa isinya?] (Speed 0.85). 14–15 dtk: cliffhanger surat.	Rumus-rumusnya disimpan di laci, katanya semacam departemen fisika teoretis pribadi biar nggak ketahuan bos. <break time="0.4s" /> Lalu, Mei seribu sembilan ratus lima, ia menulis surat ke Habicht. <break time="0.5s" /> Aku janjikan empat karya. Yang pertama katanya sangat revolusioner. Apa isinya?	Spill Fakta: Konon Einstein menyebut laci mejanya sebagai 'departemen fisika teoretis'.
+Musik/SFX: Laci ditutup 'tuk', berhenti menggantung.
+
+EPISODE 7 — Einstein dan Tahun Ajaib
+Mitos Diluruskan: Semua gagasan 1905 lahir sendirian dan langsung dipuja dunia.  |  Frame Akhir: Huruf 'c' kuning menyala terang di papan gelap (BERSAMBUNG…).
+Scene	Arahan Visual, Kamera & Alur Per Detik	Teks Dubbing (Humor + Satir Tipis)	Pop-up, Spill Fakta & Audio
+S1 (0:00–0:15)
+Cahaya Berupa Paket	L-06 Papan Tulis 1905 | Zoom-in angka kuning '1905'. Foton pecah menjadi butiran kotak kuning yang menabrak logam hingga memercik [efek fotolistrik]. Medali Nobel melayang.	Tahun seribu sembilan ratus lima. Albert dua puluh enam, masih pegawai kantor paten kelas tiga. <break time="0.4s" /> Maret: ia menulis bahwa cahaya bisa berperilaku seperti paket-paket energi kecil. <break time="0.4s" /> Inilah dasar efek fotolistrik, yang kelak membuatnya meraih Nobel.	Pop-up: MARET — CAHAYA = PAKET
+Musik/SFX: Synth naik, SFX 'ping' berderet.
+S2 (0:15–0:30)
+Serbuk Sari Menari	L-06 Meja Mikroskop | Zoom-in tetes air: serbuk sari kuning zig-zag ditabrak molekul putih [bukti kuat bahwa atom itu nyata]. 11–15 dtk: disertasi diserahkan, stempel hijau 'Dr. 1906' muncul.	Mei: ia menjelaskan kenapa serbuk sari menari acak di air. Jawabannya: ditabrak molekul. <break time="0.4s" /> Bukti kuat bahwa atom itu nyata. <break time="0.4s" /> Juli: disertasinya diserahkan ke Universitas Zurich. Gelar doktornya resmi menyusul tahun berikutnya—asli lewat riset, bukan jalur kilat.	Pop-up: MEI — ATOM TERBUKTI ✔ · GELAR: DOKTOR
+Musik/SFX: Beat playful, 'plop' molekul, stempel.
+S3 (0:30–0:45)
+Sendirian? Tidak!	L-05 Meja Kerja Malam | Zoom-in ucapan terima kasih di akhir makalah; Michele Besso melambai senang. 11–15 dtk: jurnal fisika terbit dengan kolom komentar kosong [Sepi. Hampir tanpa komentar].	Juni: relativitas khusus. Makalahnya nyaris tanpa daftar pustaka, tapi di ujungnya ada terima kasih khusus untuk sahabatnya, Michele Besso. <break time="0.4s" /> Jadi, sendirian? Tidak. Ada teman diskusi. <break time="0.4s" /> Dan reaksi dunia akademik? Sepi. Hampir tanpa komentar.	Pop-up: JURNAL: 0 KOMENTAR · Kak Netijen: Belum viral
+Musik/SFX: Bass playful, suara jangkrik.
+S4 (0:45–1:00)
+Satu Rumus Kecil	L-06 Papan Satu Persamaan | 0–7 dtk: zoom-in perlahan ke kapur putih besar 'E = mc²' berhalo kuning [E sama dengan em ce kuadrat]. 7–11 dtk: kartu Spill Fakta (4 dtk). 11–14 dtk: Foton berhenti di huruf 'c' [Tapi kenapa cahaya selalu jadi patokan?] (Speed 0.85). 14–15 dtk: cliffhanger huruf 'c'.	September: makalah pendek terakhir. Isinya: massa dan energi adalah satu keluarga. <break time="0.4s" /> E sama dengan em ce kuadrat. <break time="0.5s" /> Tapi kenapa cahaya selalu jadi patokan mutlak?	Spill Fakta: Rumus E = mc² muncul dalam makalah pendek bulan September, bukan makalah relativitas bulan Juni.
+Musik/SFX: 'Whoosh' cahaya, berhenti menggantung.
+
+EPISODE 8 — Einstein, Cahaya, dan Waktu yang Melar
+Mitos Diluruskan: Rumus E = mc² adalah resep membuat bom atom.  |  Frame Akhir: Kursi kantor paten kosong di depan jendela senja (BERSAMBUNG…).
+Scene	Arahan Visual, Kamera & Alur Per Detik	Teks Dubbing (Humor + Satir Tipis)	Pop-up, Spill Fakta & Audio
+S1 (0:00–0:15)
+Dua Aturan Simpel	L-06 Dua Kartu Aturan | Albert menunjuk 'ATURAN 1' dan 'ATURAN 2'. Dua kereta mini melaju di bawah, Foton berlari dengan jarak tetap [kecepatan cahaya selalu sama]. Kepala Albert berasap kecil.	Relativitas khusus intinya cuma dua aturan. <break time="0.4s" /> Satu: hukum fisika sama untuk semua yang bergerak stabil. Dua: kecepatan cahaya selalu sama, siapa pun yang mengukurnya. <break time="0.4s" /> Aturannya simpel. Akibatnya bikin kepala berasap.	Pop-up: ATURAN #2: KECEPATAN CAHAYA = TETAP
+Musik/SFX: Lo-fi energik, 'ting', 'puff' asap.
+S2 (0:15–0:30)
+Waktu Itu Melar	L-07 SPLIT SCREEN JAM (x=540) | Kiri: Bumi (jam cepat) vs Kanan: Roket melesat (jam melambat). 12–15 dtk: Kak Netijen pegang ponsel peta GPS bingung [ojolmu nyasar].	Akibatnya, waktu itu melar. Jam yang bergerak cepat berdetak lebih lambat. <break time="0.4s" /> Pakai peta di ponsel? Satelit GPS harus dikoreksi sekitar tiga puluh delapan mikrodetik per hari karena relativitas. <break time="0.4s" /> Tanpa Einstein, titik jemput ojolmu pasti nyasar.	Pop-up: GPS: MENCARI LOKASI… NYASAR 😆
+Musik/SFX: Synth playful, jam melambat 'tiiik… tok'.
+S3 (0:30–0:45)
+Resep Bom? Bukan	L-06 Papan Penuh Coretan | Zoom-out 'E = mc²' jadi kecil di tengah coretan. Ikon bom hitam dicoret silang pink besar [Salah]. Sebutir debu kuning menyala [sembilan puluh triliun joule].	Mitos besar: rumus ini adalah resep bom. Salah total. <break time="0.4s" /> Rumusnya cuma bilang: massa kecil menyimpan energi raksasa. Satu gram materi setara sekitar sembilan puluh triliun joule. <break time="0.4s" /> Cara melepaskannya? Rumus ini sama sekali tidak menjelaskan.	Pop-up: E = mc² ≠ RESEP BOM ❌
+Musik/SFX: Bass turun, SFX 'bzzt' salah.
+S4 (0:45–1:00)
+Pikiran Paling Bahagia	L-05 Kantor Senja | 0–7 dtk: dolly dari kerumunan bingung ke Max Planck membuka jurnal mengangguk [pendukung awal]. 7–11 dtk: kartu Spill Fakta (4 dtk). 11–14 dtk: dolly ke kursi kosong senja [pikiran paling bahagia seumur hidupnya. Apa itu?] (Speed 0.85). 14–15 dtk: cliffhanger kursi kosong.	Dunia fisika awalnya bingung. Tapi Max Planck, bintang fisika Berlin, jadi salah satu pendukung awal. <break time="0.4s" /> Tahun seribu sembilan ratus sembilan, Albert akhirnya meninggalkan kantor paten. <break time="0.5s" /> Tapi di kursi itu, ia pernah punya satu pikiran paling bahagia seumur hidupnya. Apa itu?	Spill Fakta: Max Planck menjadi salah satu pendukung awal relativitas khusus sejak 1906.
+Musik/SFX: Kursi berderit, berhenti menggantung.
+
+EPISODE 9 — Einstein dan Hari Paling Bahagia
+Mitos Diluruskan: Einstein jago matematika sempurna tanpa perlu bantuan siapa pun.  |  Frame Akhir: Planet Merkurius bermuka cemberut membesar di tengah layar (BERSAMBUNG…).
+Scene	Arahan Visual, Kamera & Alur Per Detik	Teks Dubbing (Humor + Satir Tipis)	Pop-up, Spill Fakta & Audio
+S1 (0:00–0:15)
+Orang yang Jatuh	L-05 Kantor 1907 | Zoom-in mata Albert 28 thn. Di luar jendela, tukang atap tergelincir dan melayang bersama topi & perkakasnya [tidak merasakan berat badannya]. Panah kapur percepatan muncul.	Seribu sembilan ratus tujuh, di kursi kantor paten, Albert berkhayal: orang yang jatuh bebas tidak merasakan berat badannya. <break time="0.4s" /> Ia menyebutnya pikiran paling bahagia seumur hidupnya. <break time="0.4s" /> Gravitasi, ternyata, bisa ditiru dengan percepatan.	Pop-up: PIKIRAN PALING BAHAGIA 💡
+Musik/SFX: Piano naik, 'whoosh' jatuh, 'ding' ide.
+S2 (0:15–0:30)
+Naik Level	L-09 Peta Eropa (Zurich–Praha–Berlin) | Whip pan antar titik, jas Albert makin mewah (3 kostum). 13–15 dtk: siluet Mileva & dua anak berjalan menjauh [hidup pribadinya retak].	Kariernya melesat cepat: profesor di Zurich, Praha, lalu kembali ke Zurich. <break time="0.4s" /> Tahun seribu sembilan ratus empat belas, ia pindah ke Berlin dengan jabatan super bergengsi. <break time="0.4s" /> Tapi hidup pribadinya retak: Mileva dan kedua anaknya pulang ke Zurich.	Pop-up: LEVEL UP ⬆️ · HUBUNGAN: RUMIT
+Musik/SFX: Beat naik lalu pelan, peluit kereta.
+S3 (0:30–0:45)
+Marcel, Tolong!	L-06 Papan Kusut Tensor | Vignette pink panik. Albert garuk kepala memanggil Marcel Grossmann. Marcel masuk membawa buku tebal geometri lengkung; Albert sujud tobat [tobat berat].	Masalahnya, gravitasi lengkung butuh matematika super rumit. <break time="0.4s" /> Albert panik: Marcel, tolong aku, atau aku bisa gila! <break time="0.4s" /> Si fisikawan jenius ini dulu sempat meremehkan matematika rumit, lalu akhirnya tobat berat.	Pop-up: LEVEL MATEMATIKA: BUTUH BANTUAN 🆘
+Musik/SFX: Bass playful, buku tebal jatuh 'thud'.
+S4 (0:45–1:00)
+Versi Beta	L-06 Papan Berlin Tanda Silang | 0–7 dtk: Albert 34 thn lelah mencoret silang pink versi '1913' dan menulis 'v2' [masih salah di beberapa bagian]. 7–11 dtk: kartu Spill Fakta (4 dtk). 11–14 dtk: Merkurius kecil cemberut muncul di pojok [Merkurius ngambek] (Speed 0.85). 14–15 dtk: cliffhanger Merkurius.	Mereka menerbitkan versi pertama tahun seribu sembilan ratus tiga belas. Hasilnya? Masih salah di beberapa bagian. <break time="0.4s" /> Jadi tak ada jenius yang langsung rilis versi final tanpa revisi. <break time="0.5s" /> Dan di langit, satu planet masih menolak cocok dengan hitungan. Merkurius ngambek.	Spill Fakta: Teori Einstein–Grossmann 1913 masih memuat kekeliruan yang harus diperbaiki Einstein pada 1915.
+Musik/SFX: Kapur patah, berhenti menggantung.
+
+EPISODE 10 — Einstein dan Merkurius yang Ngambek
+Mitos Diluruskan: Einstein menyusun relativitas umum sendirian tanpa ada saingan.  |  Frame Akhir: Peta kecil berisi koper dan teleskop di depan Matahari gerhana (BERSAMBUNG…).
+Scene	Arahan Visual, Kamera & Alur Per Detik	Teks Dubbing (Humor + Satir Tipis)	Pop-up, Spill Fakta & Audio
+S1 (0:00–0:15)
+Planet yang Nakal	L-07 Orbit Merkurius | Orbit elips bergeser pelan, angka kapur kuning '43' muncul. Astronom garuk kepala, siluet Newton angkat bahu. Planet bayangan 'Vulkan' retak menghilang [tidak pernah ada].	Merkurius punya kebiasaan aneh: orbitnya bergeser lebih banyak dari hitungan Newton. <break time="0.4s" /> Selisihnya empat puluh tiga detik busur per abad. <break time="0.4s" /> Astronom dulu kekeh ada planet tersembunyi bernama Vulkan. Padahal, planet itu tidak pernah ada—cuma teori halu.	Pop-up: PLANET VULKAN: 404 NOT FOUND
+Musik/SFX: Synth misterius, 'plop' planet.
+S2 (0:15–0:30)
+Empat Kamis di Berlin	L-08 Aula Akademi Prusia | Dolly ke podium. Kalender menampilkan 4 Kamis November 1915. Pada Kamis ketiga, Albert membeku memegang dada, ikon hati berdebar, angka '43' menyala [jantungnya sampai berdebar].	November seribu sembilan ratus lima belas. Empat Kamis berturut-turut, Albert presentasi di Akademi Prusia sambil terus merevisi rumusnya. <break time="0.4s" /> Pada Kamis ketiga, hitungannya cocok persis dengan pergeseran Merkurius. <break time="0.4s" /> Konon jantungnya sampai berdebar kencang.	Pop-up: MERKURIUS: COCOK ✔
+Musik/SFX: Build up, detak jantung 'dug-dug'.
+S3 (0:30–0:45)
+Balapan dengan Hilbert	L-06 SPLIT SCREEN BERLIN–GÖTTINGEN (x=540) | Kiri papan Albert (25 Nov), kanan papan David Hilbert (20 Nov), amplop surat bolak-balik cepat [lima hari sebelum Albert]. Keduanya salaman jauh.	Plot twist: di Göttingen, matematikawan jenius David Hilbert ikut mengejar persamaan yang sama. Mereka saling berkirim surat sambil ngebut. <break time="0.4s" /> Hilbert menyerahkan makalahnya lima hari sebelum Albert. <break time="0.4s" /> Tapi persamaan itu tetap dikenal sebagai persamaan medan Einstein.	Pop-up: BALAPAN: EINSTEIN vs HILBERT
+Musik/SFX: Beat balapan, 'whoosh' surat.
+S4 (0:45–1:00)
+Prediksi Berani	L-07 Langit Gerhana | 0–7 dtk: cahaya bintang melengkung kuning melewati Matahari gelap, 2x garis Newton. 7–11 dtk: kartu Spill Fakta (4 dtk) + lembar '1914' disilang. 11–14 dtk: gerhana membesar [Siapa yang berani berangkat?] (Speed 0.85). 14–15 dtk: cliffhanger teleskop.	Teorinya meramal: cahaya bintang melengkung dekat Matahari, dua kali lipat prediksi Newton. <break time="0.4s" /> Ekspedisi pembuktian tahun seribu sembilan ratus empat belas gagal karena perang. Untungnya? Prediksi lamanya memang masih keliru. <break time="0.5s" /> Sekarang tinggal menunggu gerhana berikutnya. Siapa yang berani berangkat?	Spill Fakta: Ekspedisi gerhana 1914 gagal karena perang; nilai prediksi Einstein saat itu masih keliru dan baru diperbaiki pada 1915.
+Musik/SFX: Sirene jauh, berhenti menggantung.
+
+EPISODE 11 — Einstein dan Gerhana yang Bikin Viral
+Mitos Diluruskan: Gerhana 1919 membuktikan teori Einstein secara sempurna tanpa keraguan.  |  Frame Akhir: Segel telegram Swedia bertuliskan 'NOBEL' menutup layar (BERSAMBUNG…).
+Scene	Arahan Visual, Kamera & Alur Per Detik	Teks Dubbing (Humor + Satir Tipis)	Pop-up, Spill Fakta & Audio
+S1 (0:00–0:15)
+Dua Tim, Dua Benua	L-09 Peta Atlantik | Garis kapur melesat dari London ke Pulau Principe (Afrika) dan Sobral (Brasil). Arthur Eddington siapkan teleskop; Kak Netijen ngopi di kapal [cuaca cerah].	Inggris, seribu sembilan ratus sembilan belas, Perang Dunia Pertama baru usai. <break time="0.4s" /> Astronom Inggris Arthur Eddington berangkat menguji teori fisikawan Jerman. Dua tim ke dua tempat: pulau Principe dan kota Sobral. <break time="0.4s" /> Harapan mereka cuma satu: cuaca cerah.	Pop-up: MISI: UJI EINSTEIN 🌑
+Musik/SFX: Synth petualangan, peluit kapal.
+S2 (0:15–0:30)
+Awan Menutupi Matahari	L-09 Pulau Principe | Hujan kapur diagonal turun deras, awan tebal tutup Matahari. Detik ±8 hujan berhenti, celah awan terbuka tipis, Eddington memotret pelat kaca cepat [butuh berbulan-bulan].	Dua puluh sembilan Mei. Di Principe, hujan turun sampai pagi, awan tebal menutupi Matahari. <break time="0.4s" /> Di menit-menit terakhir, awan sedikit membuka. Eddington cuma dapat beberapa foto pelat kaca yang layak. <break time="0.4s" /> Dan hitung-hitungannya butuh waktu berbulan-bulan.	Pop-up: CUACA: BERAWAN ☁️ · FOTO LAYAK: SEDIKIT
+Musik/SFX: Build up, hujan, rana kamera 'krek'.
+S3 (0:30–0:45)
+Viral Semalam	L-08 Aula Royal Society | Eddington umumkan hasil di podium, hadirin bersorak, koran The Times terbang dengan judul besar. Potong ke Albert di Berlin baca telegram tersenyum [Viral abad dua puluh].	Enam November, hasilnya diumumkan di London: cahaya bintang memang melengkung, sesuai prediksi Einstein. <break time="0.4s" /> Esoknya, koran The Times menulis soal revolusi dalam sains. <break time="0.4s" /> Semalam, Albert berubah dari profesor sibuk jadi selebriti dunia. Viral abad dua puluh tanpa perlu beli buzzer.	Pop-up: TRENDING #1 🌍 EINSTEIN · Kak Netijen: Akhirnya viral!
+Musik/SFX: Beat naik, sorak hadirin, 'ting' notif.
+S4 (0:45–1:00)
+Cek Fakta Gerhana	L-06 Papan Data 1919 | 0–7 dtk: titik data kuning bergoyang berisik, Albert naikkan alis [datanya cukup berisik]. 7–11 dtk: kartu Spill Fakta (4 dtk) + grafik melurus. 11–14 dtk: telegram bersegel Swedia meluncur [Hadiah Nobel. Tapi, untuk apa?] (Speed 0.85). 14–15 dtk: cliffhanger segel.	Mitosnya: satu foto gerhana membuktikan segalanya tanpa celah. Faktanya, datanya cukup berisik dan sempat diperdebatkan. <break time="0.4s" /> Namun pengukuran berikutnya makin akurat dan mendukung Einstein. <break time="0.5s" /> Lalu datang kabar dari Swedia. Hadiah Nobel. Tapi, untuk apa?	Spill Fakta: Data 1919 sempat diperdebatkan; pengukuran yang lebih akurat belakangan mendukung prediksi Einstein.
+Musik/SFX: Telegram 'klik', berhenti menggantung.
+
+EPISODE 12 — Einstein dan Nobel yang Salah Sasaran
+Mitos Diluruskan: Einstein menerima Hadiah Nobel Fisika untuk teori relativitas.  |  Frame Akhir: Amplop surat bersegel bertuliskan 'Presiden' di atas pagar kapal (BERSAMBUNG…).
+Scene	Arahan Visual, Kamera & Alur Per Detik	Teks Dubbing (Humor + Satir Tipis)	Pop-up, Spill Fakta & Audio
+S1 (0:00–0:15)
+Kabar di Tengah Laut	L-09 Dek Kapal Senja | Zoom-in telegram di tangan Albert 43 thn bersama Elsa. Medali Nobel muncul; tulisan kapur 'efek fotolistrik' menggantikan 'relativitas' [terlalu kontroversial].	Akhir seribu sembilan ratus dua puluh dua, Albert sedang di kapal menuju Jepang. Kabar datang: ia meraih Nobel Fisika. <break time="0.4s" /> Tapi bukan untuk relativitas. Panitia memilih: hukum efek fotolistrik. <break time="0.4s" /> Kabarnya, relativitas masih dianggap terlalu kontroversial oleh komite.	Pop-up: NOBEL FISIKA 🏅 — UNTUK: EFEK FOTOLISTRIK
+Musik/SFX: Lo-fi ombak, 'ting' medali.
+S2 (0:15–0:30)
+Hadiahnya Sudah Ada Pemiliknya	L-01 Ruang Tamu Meja Kayu | Zoom-in perjanjian cerai 1919 ('Nobel → Mileva dan anak-anak'). Albert meletakkan amplop hadiah ke dompet Mileva [Dan ia benar].	Dan uang hadiahnya? Ternyata sudah ada tuan rumahnya sejak lama. <break time="0.4s" /> Dalam perjanjian cerai tahun seribu sembilan ratus sembilan belas, uang Nobel dijanjikan untuk Mileva dan kedua anak mereka. <break time="0.4s" /> Albert PD banget bakal menang suatu hari. Dan ia benar.	Pop-up: UANG HADIAH → MILEVA & ANAK-ANAK ✔
+Musik/SFX: Piano pelan, goresan pena.
+S3 (0:30–0:45)
+Selebriti, Lalu Sasaran	L-10 SPLIT SCREEN JEPANG–BERLIN (x=540) | Kiri: Jepang meriah lampion pink, Albert dikelilingi fans. Kanan: Berlin gelap, bayangan tempel poster coretan silang tanpa teks kebencian. Kak Netijen cemas.	Albert makin terkenal. Di Jepang, ia disambut bak bintang pop. <break time="0.4s" /> Tapi di Jerman, angin politik berubah ekstrem. Sekelompok fanatik menyerang relativitas dan melabelinya sains Yahudi. <break time="0.4s" /> Ia bahkan pernah diperingatkan soal ancaman pembunuhan.	Pop-up: FANS: JUTAAN · HATERS: BERBAHAYA
+Musik/SFX: Bass turun, kerumunan hening.
+S4 (0:45–1:00)
+Tidak Akan Pulang	L-10 Pelabuhan 1933 | 0–7 dtk: Albert 54 thn mengunci koper bersama Elsa; api jingga kecil membakar tumpukan buku di kejauhan [tidak akan pulang ke Jerman]. 7–11 dtk: kartu Spill Fakta (4 dtk). 11–14 dtk: kapal berangkat [sebuah surat akan mengguncang dunia] (Speed 0.85). 14–15 dtk: cliffhanger amplop.	Januari seribu sembilan ratus tiga puluh tiga, Hitler berkuasa. Albert yang sedang di Amerika memutuskan: tidak akan pulang ke Jerman. Buku-bukunya ikut dibakar. <break time="0.4s" /> Saat ilmuwan dipaksa tunduk pada kekuasaan, yang waras memang memilih pindah. <break time="0.5s" /> Kapal membawanya ke tempat baru. Dan dari sana, sebuah surat akan mengguncang dunia.	Spill Fakta: Pada 1933 Einstein memutuskan tidak kembali ke Jerman dan meninggalkan Akademi Prusia.
+Musik/SFX: Peluit kapal, berhenti menggantung.
+
+EPISODE 13 — Einstein dan Surat Terbesar
+Mitos Diluruskan: Einstein adalah ilmuwan yang membuat bom atom.  |  Frame Akhir: Papan tulis penuh rumus belum selesai dengan tanda tanya kapur (BERSAMBUNG…).
+Scene	Arahan Visual, Kamera & Alur Per Detik	Teks Dubbing (Humor + Satir Tipis)	Pop-up, Spill Fakta & Audio
+S1 (0:00–0:15)
+Hidup Tenang di Princeton	L-11 Kampus Princeton & Danau | Dolly mengikuti Albert 54 thn jalan kaki di bawah daun gugur, lalu berlayar di perahu kecil. Kak Netijen lompat dari semak minta selfie [menyingkir dari keramaian].	Oktober seribu sembilan ratus tiga puluh tiga, Albert tiba di Princeton, Amerika. <break time="0.4s" /> Hidupnya tenang: jalan kaki ke kantor, berlayar dengan perahu kecil, dan berpikir. <break time="0.4s" /> Ia bilang senang akhirnya bisa menyingkir dari hiruk-pikuk keramaian.	Pop-up: STATUS: MODE HEALING 🌿
+Musik/SFX: Akustik santai, angin & air danau.
+S2 (0:15–0:30)
+Kabar dari Uranium	L-06 Papan Fisi Uranium | Inti atom putih membelah dua dengan percikan kuning, Lise Meitner menulis penjelasan. Leo Szilard panik mengetuk pintu rumah liburan Albert [Leo Szilard pun menemui Albert].	Desember seribu sembilan ratus tiga puluh delapan, ilmuwan di Jerman menemukan pembelahan inti uranium, dan Lise Meitner membantu menjelaskannya. <break time="0.4s" /> Para ilmuwan pengungsi panik: bagaimana kalau rezim Nazi membuat bom super? <break time="0.4s" /> Leo Szilard pun bergegas menemui Albert.	Pop-up: URANIUM: BISA PECAH ⚠️
+Musik/SFX: Synth tegang, 'crack' atom, ketukan pintu.
+S3 (0:30–0:45)
+Surat untuk Presiden	L-08 Ruang Oval Kecil | Szilard menulis surat, Albert menandatangani (close-up). Roosevelt di kursi roda membaca dengan dahi berkerut. Ikon 'Proyek Manhattan' dicoret silang kapur besar oleh Albert [tidak ikut Proyek Manhattan].	Dua Agustus seribu sembilan ratus tiga puluh sembilan: surat untuk Presiden Roosevelt. Ditulis Szilard, ditandatangani Albert. <break time="0.4s" /> Isinya peringatan bahwa bom jenis baru mungkin bisa dibuat Jerman. <break time="0.4s" /> Mitosnya: Albert membuat bom atom. Faktanya, ia sama sekali tidak ikut Proyek Manhattan.	Pop-up: EINSTEIN ≠ PEMBUAT BOM ❌
+Musik/SFX: Bass rendah, goresan tanda tangan.
+S4 (0:45–1:00)
+Setelah Hiroshima	L-11 Ruang Kerja Malam | 0–7 dtk: zoom-in wajah muram Albert 66 thn mendengar radio [dikabarkan menyesal]. 7–11 dtk: kartu Spill Fakta (4 dtk), Albert matikan radio. 11–14 dtk: menoleh ke papan rumus tak selesai [Berhasilkah dia?] (Speed 0.85). 14–15 dtk: cliffhanger papan tulis.	Setelah Hiroshima, Albert dikabarkan sangat menyesal pernah menandatangani surat itu. Ia pun aktif berkampanye untuk perdamaian dunia. <break time="0.4s" /> Tapi ada satu misi ilmiah yang belum selesai: satu teori tunggal yang menyatukan semuanya. <break time="0.5s" /> Berhasilkah dia?	Spill Fakta: Einstein tidak mendapat izin keamanan untuk Proyek Manhattan; ia tidak ikut mengerjakannya.
+Musik/SFX: Radio mati 'klik', berhenti menggantung.
+
+EPISODE 14 — Einstein dan Seratus Tahun Kemudian
+Mitos Diluruskan: Einstein selalu benar dalam setiap prediksinya.  |  Frame Akhir: Papan tulis kosong dengan kapur menggantung & stempel 'MUSIM 2: SEGERA'.
+Scene	Arahan Visual, Kamera & Alur Per Detik	Teks Dubbing (Humor + Satir Tipis)	Pop-up, Spill Fakta & Audio
+S1 (0:00–0:15)
+Tuhan Tidak Main Dadu?	L-06 Ruang Debat | Dadu raksasa putih-kuning berputar di tengah. Albert 47 thn (rambut lebih kelabu) menggeleng, lawan debat lempar dadu. Dua foton berputar serentak terhubung garis kapur [Nobel Fisika dua ribu dua puluh dua].	Albert juga punya sisi tak terduga: ia sulit menerima mekanika kuantum. <break time="0.4s" /> Tahun seribu sembilan ratus dua puluh enam, ia menulis: Tuhan tidak bermain dadu. <break time="0.4s" /> Eksperimen belakangan membuktikan dunia kuantum memang seaneh itu, bahkan meraih Nobel Fisika dua ribu dua puluh dua.	Pop-up: DADU: 1 · EINSTEIN: 0
+Musik/SFX: Lo-fi quirky, dadu bergulir.
+S2 (0:15–0:30)
+Kesalahan Terbesar?	L-07 Galaksi Menjauh | Galaksi spiral bergerak menjauh. Albert tambahkan simbol kuning Λ lalu menghapusnya setelah Edwin Hubble menunjuk galaksi. Simbol Λ bersinar lagi di sudut [energi gelap].	Ia juga pernah menambahkan konstanta kosmologi supaya alam semesta terlihat diam. <break time="0.4s" /> Lalu Hubble menemukan alam semesta ternyata mengembang. Albert konon menyebutnya kesalahan terbesarnya—beda sama pejabat zaman sekarang yang jarang ngaku salah. <break time="0.4s" /> Ironisnya, konstanta itu kini dipakai lagi untuk menjelaskan energi gelap.	Pop-up: KONSTANTA KOSMOLOGI: HAPUS → UNDO ↩️
+Musik/SFX: Synth ruang angkasa, 'whoosh', 'ping'.
+S3 (0:30–0:45)
+Kutipan Palsu	L-12 Layar Ponsel Raksasa | Kak Netijen bagikan kutipan 'kegilaan adalah mengulang hal yang sama...', Albert Tua mencoret dengan stempel merah 'PALSU'. Potong ke tawaran Presiden Israel 1952, Albert menolak sopan.	Dan banyak kutipan Einstein di media sosial itu palsu. Misalnya: kegilaan adalah mengulang hal yang sama dan berharap hasil berbeda. <break time="0.4s" /> Tak ada bukti sejarah ia pernah mengatakannya. <break time="0.4s" /> Tahun seribu sembilan ratus lima puluh dua, ia ditawari jadi Presiden Israel. Jawabannya: tidak, terima kasih—sadar diri itu penting.	Pop-up: KUTIPAN: HOAKS ❌ · PRESIDEN: DITOLAK ✔
+Musik/SFX: Beat santai, stempel 'HOAKS'.
+S4 (0:45–1:00)
+Seratus Tahun Kemudian	L-11 Ruang Kerja Malam → L-12 Observatorium | 0–7 dtk: Albert Tua 76 thn berbaring tenang [wafat di Princeton]. 7–11 dtk: kartu Spill Fakta (4 dtk) + gelombang gravitasi kuning muncul di layar observatorium. 11–14 dtk: Foton & Si Kompas berdampingan [Siapa tokoh sains berikutnya…?] (Speed 0.88). 14–15 dtk: stempel MUSIM 2.	Delapan belas April seribu sembilan ratus lima puluh lima, Albert wafat di Princeton. Ia menolak operasi, katanya tak elok memperpanjang hidup secara buatan. <break time="0.4s" /> Seratus tahun setelah teorinya, gelombang gravitasi akhirnya terdeteksi. <break time="0.5s" /> Siapa tokoh sains berikutnya yang mitosnya mau kamu bongkar? Tulis di komentar.	Spill Fakta: Gelombang gravitasi, ramalan Einstein 1916, pertama kali terdeteksi pada 14 September 2015.
+Musik/SFX: Piano lembut berhenti, detak gelombang, hening 1 dtk.
+

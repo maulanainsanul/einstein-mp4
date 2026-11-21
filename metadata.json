@@ -1,0 +1,6 @@
+{
+  "name": "Einstein Studio — 2.5D Animation & MP4 Generator",
+  "description": "Studio Generator Video Animasi 2.5D HD (.MP4 Asli) untuk seri 14 Episode Einstein: Kisah yang Sebenarnya.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
