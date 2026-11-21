@@ -19,12 +19,15 @@ export interface CharacterActingState {
   expressionOverride?: SceneCharacterSpec['expression'];
   gestureMode?: GestureMode;
   walkOffsetX?: number;
+  walkPhase?: number;
   hopY?: number;
   torsoLean?: number;
   headYaw?: number; // -1..1
   talkingActive?: boolean;
+  isSpeaking?: boolean;
   audioAmplitude?: number;
   excitement?: number; // 0..1
+  poseBlend?: number; // 0..1 smooth easing into active beat
   quoteOverride?: string;
 }
 
@@ -742,7 +745,7 @@ function makeClayLinear(
   return g;
 }
 
-/** 2-Bone Analytical Inverse Kinematics for natural elbow & knee bending */
+/** 2-Bone Analytical Inverse Kinematics with World-Space Pole Vector (prevents backward knees & crossed elbows) */
 function solveTwoBoneIK(
   rootX: number,
   rootY: number,
@@ -750,7 +753,8 @@ function solveTwoBoneIK(
   targetY: number,
   len1: number,
   len2: number,
-  bendSign: number // +1 or -1 determines elbow/knee bend direction
+  hintX: number,
+  hintY: number
 ): { midX: number; midY: number; endX: number; endY: number } {
   const dx = targetX - rootX;
   const dy = targetY - rootY;
@@ -764,10 +768,22 @@ function solveTwoBoneIK(
     -1,
     Math.min(1, (len1 * len1 + dist * dist - len2 * len2) / (2 * len1 * dist))
   );
-  const angle1 = baseAngle + bendSign * Math.acos(cosAngle1);
+  const offset = Math.acos(cosAngle1);
 
-  const midX = rootX + Math.cos(angle1) * len1;
-  const midY = rootY + Math.sin(angle1) * len1;
+  const angleA = baseAngle + offset;
+  const angleB = baseAngle - offset;
+  const ax = Math.cos(angleA);
+  const ay = Math.sin(angleA);
+  const bx = Math.cos(angleB);
+  const by = Math.sin(angleB);
+
+  // Choose candidate whose upper-bone vector aligns best with anatomical pole direction (hintX, hintY)
+  const dotA = ax * hintX + ay * hintY;
+  const dotB = bx * hintX + by * hintY;
+  const chosenAngle = dotA >= dotB ? angleA : angleB;
+
+  const midX = rootX + Math.cos(chosenAngle) * len1;
+  const midY = rootY + Math.sin(chosenAngle) * len1;
 
   // Preserve reachable end position
   const reachRatio = rawDist > 0.001 ? dist / rawDist : 1;
@@ -777,7 +793,7 @@ function solveTwoBoneIK(
   return { midX, midY, endX, endY };
 }
 
-/** Draws a smooth volumetric tapered limb capsule along root -> mid -> end */
+/** Draws a real articulated 2-bone anatomical limb (upper bone -> joint -> forearm/shin -> hand/shoe) */
 function drawArticulatedLimb(
   ctx: CanvasRenderingContext2D,
   p0x: number,
@@ -801,70 +817,102 @@ function drawArticulatedLimb(
   ctx.lineCap = 'round';
   ctx.lineJoin = 'round';
 
-  // Crisp white 2.5D sticker outer stroke
+  const midWidth = (widthTop + widthBottom) * 0.52;
+
+  // 1) Crisp 2.5D white sticker outer silhouette along true 2-bone segments
   ctx.strokeStyle = PALETTE.chalkWhite;
   ctx.lineWidth = widthTop + 10;
   ctx.beginPath();
   ctx.moveTo(p0x, p0y);
-  ctx.quadraticCurveTo(p1x, p1y, p2x, p2y);
+  ctx.lineTo(p1x, p1y);
+  ctx.lineTo(p2x, p2y);
   ctx.stroke();
 
-  // Inner volumetric shaded core
-  const g = makeClayLinear(ctx, p0x - 12, p0y, p2x + 12, p2y, highlight, base, shadow);
-  ctx.strokeStyle = g;
-  ctx.lineWidth = (widthTop + widthBottom) * 0.5;
+  // 2) Upper segment (shoulder->elbow or hip->knee) with muscle/sleeve thickness
+  const gUpper = makeClayLinear(ctx, p0x - 10, p0y, p1x + 10, p1y, highlight, base, shadow);
+  ctx.strokeStyle = gUpper;
+  ctx.lineWidth = widthTop;
   ctx.beginPath();
   ctx.moveTo(p0x, p0y);
-  ctx.quadraticCurveTo(p1x, p1y, p2x, p2y);
+  ctx.lineTo(p1x, p1y);
   ctx.stroke();
 
-  // Specular highlight ribbon along upper edge
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.24)';
-  ctx.lineWidth = Math.max(3, widthBottom * 0.22);
+  // 3) Lower segment (elbow->wrist or knee->ankle) slightly tapered for natural anatomy
+  const gLower = makeClayLinear(ctx, p1x - 10, p1y, p2x + 10, p2y, highlight, base, shadow);
+  ctx.strokeStyle = gLower;
+  ctx.lineWidth = midWidth * 0.9;
+  ctx.beginPath();
+  ctx.moveTo(p1x, p1y);
+  ctx.lineTo(p2x, p2y);
+  ctx.stroke();
+
+  // 4) Subtle clothing fold & light edge ribbon along limb
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.22)';
+  ctx.lineWidth = Math.max(2.5, widthBottom * 0.18);
   ctx.beginPath();
   ctx.moveTo(p0x - 3, p0y - 2);
-  ctx.quadraticCurveTo(p1x - 3, p1y - 2, p2x - 2, p2y - 2);
+  ctx.lineTo(p1x - 3, p1y - 2);
+  ctx.lineTo(p2x - 2, p2y - 2);
   ctx.stroke();
 
+  // Subtle shirt cuff on arms or trouser hem on legs
+  const limbAng = Math.atan2(p2y - p1y, p2x - p1x);
+  if (!isLeg) {
+    ctx.save();
+    ctx.translate(p2x - Math.cos(limbAng) * 5, p2y - Math.sin(limbAng) * 5);
+    ctx.rotate(limbAng);
+    ctx.fillStyle = '#F8FAFC';
+    drawRoundedRectPath(ctx, -4, -widthBottom * 0.44, 7, widthBottom * 0.88, 3);
+    ctx.fill();
+    ctx.restore();
+  }
+
   if (isLeg) {
-    // 2.5D Volumetric Shoe with articulated heel-toe tilt
+    // Grounded 2.5D Leather Vintage Shoe with heel + rounded toe box
     const dir = facingSign >= 0 ? 1 : -1;
     ctx.save();
-    ctx.translate(p2x + dir * 6, p2y + 4);
+    ctx.translate(p2x + dir * 7, p2y + 4);
     ctx.rotate(shoeAngle);
     ctx.fillStyle = PALETTE.chalkWhite;
-    drawRoundedRectPath(ctx, -20, -14, 42, 24, 12);
+    drawRoundedRectPath(ctx, -20, -13, 44, 23, 10);
     ctx.fill();
 
-    const shoeGrad = makeClayLinear(ctx, -16, -12, 18, 12, '#334155', '#1E293B', '#090D16');
+    const shoeGrad = makeClayLinear(ctx, -16, -11, 20, 11, '#475569', '#1E293B', '#090D16');
     ctx.fillStyle = shoeGrad;
-    drawRoundedRectPath(ctx, -16, -10, 34, 17, 9);
+    drawRoundedRectPath(ctx, -16, -9, 36, 16, 8);
     ctx.fill();
 
-    // Sole + top gloss
+    // Sole strip + shoe top highlight
+    ctx.fillStyle = '#0F172A';
+    ctx.fillRect(-15, 4, 34, 3);
     ctx.fillStyle = 'rgba(255,255,255,0.28)';
-    drawRoundedRectPath(ctx, -10, -8, 16, 4, 2);
+    drawRoundedRectPath(ctx, -8, -7, 15, 4, 2);
     ctx.fill();
     ctx.restore();
   } else {
-    // Sculpted 3D Clay Hand + Thumb
+    // Sculpted Anatomical Human Hand (palm + tapered fingers + thumb aligned to forearm!)
     ctx.save();
     ctx.translate(p2x, p2y);
+    ctx.rotate(limbAng);
+
+    // White sticker rim
     ctx.fillStyle = PALETTE.chalkWhite;
-    ctx.beginPath();
-    ctx.arc(0, 0, handRadius + 4.5, 0, Math.PI * 2);
+    drawRoundedRectPath(ctx, -6, -handRadius * 0.78 - 3.5, handRadius * 1.7 + 7, handRadius * 1.56 + 7, 10);
     ctx.fill();
 
-    const hg = makeClayRadial(ctx, 0, 0, handRadius, '#FFF3E8', handColor, '#C88D67');
+    const hg = makeClayRadial(ctx, 4, 0, handRadius * 1.25, '#FFF3E8', handColor, '#C88D67');
     ctx.fillStyle = hg;
-    ctx.beginPath();
-    ctx.arc(0, 0, handRadius, 0, Math.PI * 2);
+    // Palm + smooth fingers
+    drawRoundedRectPath(ctx, -3, -handRadius * 0.65, handRadius * 1.55, handRadius * 1.3, 8);
     ctx.fill();
+    // Opposable thumb tilted naturally upward/inward
+    ctx.save();
+    ctx.translate(handRadius * 0.25, -handRadius * 0.65 * (facingSign >= 0 ? 1 : -1));
+    ctx.rotate(facingSign >= 0 ? -0.45 : 0.45);
+    drawRoundedRectPath(ctx, -4, -5, 13, 9, 4.5);
+    ctx.fill();
+    ctx.restore();
 
-    // Little thumb nub for organic human hand read
-    ctx.beginPath();
-    ctx.arc(facingSign * handRadius * 0.58, -handRadius * 0.4, handRadius * 0.42, 0, Math.PI * 2);
-    ctx.fill();
     ctx.restore();
   }
 
@@ -1593,22 +1641,25 @@ export function drawCharacter25D(
 
   const t = isSilentFreeze ? 0 : timeSec;
   const phase = x * 0.013;
-  const excitement = acting?.excitement ?? (acting?.talkingActive ? 0.82 : 0.48);
+  const excitement = acting?.excitement ?? (acting?.talkingActive ? 0.72 : 0.45);
+  const isSpeaking = acting?.isSpeaking ?? acting?.talkingActive ?? Boolean(effectiveSpec.quoteBubble);
+  const blend = acting?.poseBlend ?? 1;
 
-  // Rich continuous human motion curves: breath, weight shift, active knee bounce, torso lean, head yaw
-  const breathCycle = Math.sin(t * 2.5 + phase);
+  // Natural calm human breathing & slow contrapposto weight shift (~4.5s cycle)
+  const breathCycle = Math.sin(t * 1.9 + phase);
+  const weightShiftSlow = Math.sin(t * 0.75 + phase);
   const weightSway =
-    pose === 'walk' || pose === 'run'
+    pose === 'walk' || pose === 'run' || pose === 'sit' || pose === 'lie-down'
       ? 0
-      : Math.sin(t * 1.45 + phase) * (6.5 + excitement * 4.5);
+      : weightShiftSlow * 4.5;
   const kneeBounce =
-    isSilentFreeze || pose === 'lie-down'
+    isSilentFreeze || pose === 'lie-down' || pose === 'sit'
       ? 0
-      : Math.abs(Math.sin(t * 3.1 + phase)) * (3 + excitement * 5);
+      : Math.abs(Math.sin(t * 2.1 + phase)) * (isSpeaking ? 2.6 : 1.1);
 
-  const chestScaleX = 1 + breathCycle * 0.025;
-  const chestScaleY = 1 - breathCycle * 0.02;
-  const headBobY = breathCycle * 3.5 - Math.cos(t * 2.5 + phase) * 2.2 - kneeBounce * 0.35;
+  const chestScaleX = 1 + breathCycle * 0.018;
+  const chestScaleY = 1 - breathCycle * 0.014;
+  const headBobY = breathCycle * 2.4 - (isSpeaking ? Math.sin(t * 3.4 + phase) * 2.0 : Math.sin(t * 1.3 + phase) * 1.2) - kneeBounce * 0.3;
 
   const baseLookDir = effectiveSpec.facing === 'left' ? -1 : effectiveSpec.facing === 'right' ? 1 : 0;
   const dynamicHeadYaw = isSilentFreeze
@@ -1617,7 +1668,7 @@ export function drawCharacter25D(
         -1,
         Math.min(
           1,
-          (acting?.headYaw ?? baseLookDir * 0.72) + Math.sin(t * 1.35 + phase) * 0.28
+          (acting?.headYaw ?? baseLookDir * 0.65) + Math.sin(t * 0.95 + phase) * 0.16
         )
       );
   const facingSign = dynamicHeadYaw < -0.15 ? -1 : dynamicHeadYaw > 0.15 ? 1 : baseLookDir || 1;
@@ -1625,16 +1676,16 @@ export function drawCharacter25D(
   const torsoLean =
     isSilentFreeze
       ? 0
-      : (acting?.torsoLean ?? 0) +
-        Math.sin(t * 1.9 + phase) * (0.035 + excitement * 0.035) +
-        (pose === 'walk' ? facingSign * 0.07 : pose === 'run' ? facingSign * 0.15 : 0);
+      : ((acting?.torsoLean ?? 0) * blend +
+        Math.sin(t * 1.25 + phase) * 0.022 +
+        (pose === 'walk' ? facingSign * 0.055 : pose === 'run' ? facingSign * 0.12 : 0));
 
   const headTilt =
     pose === 'think' || pose === 'scratch-head'
-      ? -0.11 + Math.sin(t * 2.1 + phase) * 0.055
+      ? -0.09 + Math.sin(t * 1.6 + phase) * 0.035
       : pose === 'read' || pose === 'write'
-        ? 0.09 + Math.sin(t * 2.6 + phase) * 0.035
-        : Math.sin(t * 1.85 + phase) * (0.055 + excitement * 0.035);
+        ? 0.08 + Math.sin(t * 1.8 + phase) * 0.022
+        : Math.sin(t * 1.35 + phase) * 0.035;
 
   const scale = (effectiveSpec.scale ?? 1) * (app.heightScale ?? 1);
   const walkX = isSilentFreeze ? 0 : acting?.walkOffsetX ?? 0;
@@ -1828,80 +1879,146 @@ export function drawCharacter25D(
 
   const isWalk = pose === 'walk' || gestureMode === 'walk';
   const isRun = pose === 'run' || gestureMode === 'run';
-  const gaitSpeed = isRun ? 11.2 : isWalk ? 7.2 : 0;
+  const gaitSpeed = isRun ? 9.5 : isWalk ? 5.6 : 0;
   const gaitAmp = isRun ? 42 : isWalk ? 26 : 0;
-  const gaitPhase = t * gaitSpeed;
-  const bounceStride = isWalk || isRun ? Math.abs(Math.sin(gaitPhase)) * (isRun ? 15 : 8) : 0;
+  const gaitPhase = acting?.walkPhase ?? t * gaitSpeed;
+  const bounceStride = isWalk || isRun ? Math.abs(Math.sin(gaitPhase)) * (isRun ? 12 : 6) : 0;
 
   ctx.translate(0, -bounceStride);
 
-  const torsoW = app.kind === 'baby' ? 92 : 114;
-  const torsoH = app.outfitStyle === 'dress' ? 206 : 176;
-  const hipY = -104;
-  const torsoTop = hipY - torsoH + breathCycle * 3.5;
+  const torsoW = app.kind === 'baby' ? 88 : 112;
+  const torsoH = app.outfitStyle === 'dress' ? 204 : 176;
+  const hipY = -102;
+  const torsoTop = hipY - torsoH + breathCycle * 2.8;
 
-  // 1) LEGS with Analytical 2-Bone IK + Natural Weight Transfer & Toe-Tap!
-  const legHighlight = app.outfitStyle === 'vest-shorts' ? app.skinHighlight : app.outfitHighlight;
-  const legBase = app.outfitStyle === 'vest-shorts' ? app.skin : app.outfitColor;
-  const legShadow = app.outfitStyle === 'vest-shorts' ? app.skinShadow : app.outfitShadow;
+  const isInfantInCrib = app.kind === 'baby' && (effectiveSpec.yOffset ?? 0) < -10 && pose === 'sit';
 
-  for (const side of [-1, 1] as const) {
-    const hipX = side * 24 + weightSway * 0.25;
-    let footX = side * 28;
-    let footY = -10;
-    let shoeAng = 0;
+  // Grounded 2.5D Wooden Chair when human character is sitting (never squatting in empty air!)
+  if (pose === 'sit' && !isInfantInCrib && app.outfitStyle !== 'wheelchair') {
+    ctx.save();
+    const chairBackX = -facingSign * 44;
+    const chairSeatY = -74;
+    ctx.strokeStyle = PALETTE.chalkWhite;
+    ctx.lineWidth = 5;
+    // Chair back post
+    ctx.fillStyle = '#5C3A21';
+    drawRoundedRectPath(ctx, chairBackX - 7, chairSeatY - 125, 14, 130, 5);
+    ctx.fill();
+    ctx.stroke();
+    // Chair legs down to floor
+    ctx.fillStyle = '#472B18';
+    drawRoundedRectPath(ctx, -38, chairSeatY + 4, 12, 74, 4);
+    ctx.fill();
+    drawRoundedRectPath(ctx, 26, chairSeatY + 4, 12, 74, 4);
+    ctx.fill();
+    // Seat cushion
+    ctx.fillStyle = '#7C4D2B';
+    drawRoundedRectPath(ctx, -46, chairSeatY - 8, 92, 16, 6);
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+  }
 
-    if (isWalk || isRun) {
-      const s = Math.sin(gaitPhase + (side < 0 ? 0 : Math.PI));
-      const c = Math.max(0, Math.cos(gaitPhase + (side < 0 ? 0 : Math.PI)));
-      footX = side * 22 + s * gaitAmp * facingSign;
-      footY = -10 - c * (isRun ? 30 : 18);
-      shoeAng = -s * 0.28 * facingSign;
-    } else if (pose === 'kneel') {
-      footX = side * 34;
-      footY = -66;
-    } else if (pose === 'sit') {
-      // Lively foot tap when sitting
-      const tap = side === 1 && !isSilentFreeze ? Math.max(0, Math.sin(t * 6.5)) * 7 : 0;
-      footX = side * 32 + facingSign * 26;
-      footY = -52 - tap;
-      shoeAng = tap > 1 ? -0.18 : 0;
-    } else if (pose === 'float') {
-      footX = side * 24 + Math.sin(t * 3 + side) * 12;
-      footY = -16 + Math.cos(t * 3 + side) * 10;
-    } else {
-      // Natural lively active standing: balanced wide stance + dynamic step-out & heel tap
-      const stepOut = side === facingSign ? Math.sin(t * 1.45 + phase) * 10 : 0;
-      const heelTap =
-        side === 1 && !isSilentFreeze
-          ? Math.max(0, Math.sin(t * 4.2 + phase)) * (4 + excitement * 6)
-          : 0;
-      footX = side * 32 + stepOut;
-      footY = -10 - heelTap;
-      shoeAng = heelTap > 1.5 ? -0.16 * facingSign : 0;
-    }
-
-    const legBendDir = isWalk || isRun || pose === 'sit' ? facingSign : side * 0.45;
-    const ikLeg = solveTwoBoneIK(hipX, hipY, footX, footY, 54, 52, legBendDir);
-    drawArticulatedLimb(
+  // 1) ANATOMICAL HUMAN LEGS (Grounded Contrapposto Stance & Pole-Locked Forward Knees!)
+  if (isInfantInCrib) {
+    // Cozy infant crib blanket & swaddle tuck instead of long adult trouser legs
+    ctx.save();
+    const swaddleG = makeClayLinear(ctx, -42, -110, 42, -24, '#E0F2FE', '#BAE6FD', '#7DD3FC');
+    drawStickerPath(
       ctx,
-      hipX,
-      hipY,
-      ikLeg.midX,
-      ikLeg.midY,
-      ikLeg.endX,
-      ikLeg.endY,
-      28,
-      22,
-      legHighlight,
-      legBase,
-      legShadow,
-      app.skin,
-      14,
-      true,
-      facingSign,
-      shoeAng
+      () => drawRoundedRectPath(ctx, -46, -108, 92, 78, 22),
+      swaddleG,
+      8
     );
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
+    drawRoundedRectPath(ctx, -40, -104, 80, 14, 7);
+    ctx.fill();
+    ctx.restore();
+  } else {
+    const legHighlight = app.outfitStyle === 'vest-shorts' ? app.skinHighlight : app.outfitHighlight;
+    const legBase = app.outfitStyle === 'vest-shorts' ? app.skin : app.outfitColor;
+    const legShadow = app.outfitStyle === 'vest-shorts' ? app.skinShadow : app.outfitShadow;
+
+    for (const side of [-1, 1] as const) {
+      const hipX = side * 22 + weightSway * 0.25;
+      let footX = side * 24;
+      let footY = -8;
+      let shoeAng = 0;
+
+      if (isWalk || isRun) {
+        const s = Math.sin(gaitPhase + (side < 0 ? 0 : Math.PI));
+        const c = Math.max(0, Math.cos(gaitPhase + (side < 0 ? 0 : Math.PI)));
+        footX = side * 18 + s * gaitAmp * facingSign;
+        footY = -8 - c * (isRun ? 28 : 16);
+        shoeAng = -s * 0.24 * facingSign;
+      } else if (pose === 'kneel') {
+        footX = side * 30;
+        footY = -62;
+      } else if (pose === 'sit') {
+        const tap = side === 1 && !isSilentFreeze ? Math.max(0, Math.sin(t * 3.8)) * 4 : 0;
+        footX = side * 18 + facingSign * 34;
+        footY = -12 - tap;
+        shoeAng = tap > 1 ? -0.14 : 0;
+      } else if (pose === 'float') {
+        footX = side * 22 + Math.sin(t * 2.4 + side) * 10;
+        footY = -14 + Math.cos(t * 2.4 + side) * 8;
+      } else {
+        // Grounded human contrapposto: supporting leg upright & straight; free leg subtly relaxed
+        const isRelaxSide = (weightShiftSlow >= 0 && side === -1) || (weightShiftSlow < 0 && side === 1);
+        footX = side * 24 + (isRelaxSide ? side * 4 : 0);
+        footY = isRelaxSide ? -9 : -7;
+        shoeAng = isRelaxSide ? side * 0.03 : 0;
+      }
+
+      // World-space anatomical knee pole vector: knees ALWAYS point forward toward facingSign!
+      const kneeHintX = facingSign * 1.0;
+      const kneeHintY = pose === 'sit' ? -0.25 : 0.15;
+      const sitHipX = pose === 'sit' ? side * 16 - facingSign * 8 : hipX;
+      const sitHipY = pose === 'sit' ? -84 : hipY;
+      const thighLen = pose === 'sit' ? 56 : 48;
+      const shinLen = pose === 'sit' ? 56 : 47;
+      const ikLeg = solveTwoBoneIK(sitHipX, sitHipY, footX, footY, thighLen, shinLen, kneeHintX, kneeHintY);
+
+      drawArticulatedLimb(
+        ctx,
+        sitHipX,
+        sitHipY,
+        ikLeg.midX,
+        ikLeg.midY,
+        ikLeg.endX,
+        ikLeg.endY,
+        27,
+        20,
+        legHighlight,
+        legBase,
+        legShadow,
+        app.skin,
+        13,
+        true,
+        facingSign,
+        shoeAng
+      );
+
+      // Classic knee-length shorts & long socks for boys in vest-shorts
+      if (app.outfitStyle === 'vest-shorts') {
+        ctx.save();
+        ctx.lineCap = 'round';
+        ctx.strokeStyle = app.outfitColor;
+        ctx.lineWidth = 29;
+        ctx.beginPath();
+        ctx.moveTo(sitHipX, sitHipY + 4);
+        ctx.lineTo((sitHipX + ikLeg.midX) * 0.52, (sitHipY + ikLeg.midY) * 0.52);
+        ctx.stroke();
+        // White knee socks above shoe
+        ctx.strokeStyle = '#F8FAFC';
+        ctx.lineWidth = 21;
+        ctx.beginPath();
+        ctx.moveTo((ikLeg.midX + ikLeg.endX) * 0.5, (ikLeg.midY + ikLeg.endY) * 0.5);
+        ctx.lineTo(ikLeg.endX, ikLeg.endY - 4);
+        ctx.stroke();
+        ctx.restore();
+      }
+    }
   }
 
   // Wheelchair for Roosevelt
@@ -1934,167 +2051,200 @@ export function drawCharacter25D(
     ctx.fillStyle = gTail;
     ctx.beginPath();
     ctx.moveTo(-54, -140);
-    ctx.quadraticCurveTo(-30 + Math.sin(t * 4) * 20, -40, 0, -10);
-    ctx.quadraticCurveTo(30 + Math.sin(t * 4) * 20, -40, 54, -140);
+    ctx.quadraticCurveTo(-30 + Math.sin(t * 2.8) * 16, -40, 0, -10);
+    ctx.quadraticCurveTo(30 + Math.sin(t * 2.8) * 16, -40, 54, -140);
     ctx.closePath();
     ctx.fill();
     ctx.restore();
   }
 
-  // ==================== UPPER BODY PIVOTING AROUND PELVIS (TORSO LEAN!) ====================
+  // ==================== UPPER BODY PIVOTING AROUND PELVIS ====================
   ctx.save();
   ctx.translate(0, hipY);
   ctx.rotate(torsoLean);
   ctx.translate(0, -hipY);
 
-  // Compute Lively Active Hand Targets for LEFT (-1) and RIGHT (+1) arms!
-  const getHandTarget = (side: -1 | 1): { x: number; y: number; bend: number } => {
-    const shX = side * (torsoW * 0.45);
+  // Structured Smooth Human Hand Targets + Anatomical Outward/Downward Elbow Pole Vector
+  const getHandTarget = (
+    side: -1 | 1
+  ): { x: number; y: number; hintX: number; hintY: number } => {
+    const shX = side * (torsoW * 0.44);
     const shY = torsoTop + 28;
-    const talkWave = Math.sin(t * (4.8 + excitement * 2.2) + phase + (side < 0 ? 1.4 : 0));
-    const altWave = Math.cos(t * (3.6 + excitement * 1.8) + phase + (side < 0 ? 0.6 : 2.1));
+    const outX = side * 0.85;
+    const downY = 0.65;
+    // Calm human speech gesture phrasing (smooth 2.2 rad/s primary arc + 0.9 rad/s pause)
+    const phraseGate = 0.55 + 0.45 * Math.sin(t * 1.1 + phase);
+    const talkWave = Math.sin(t * 2.4 + phase + (side < 0 ? 1.2 : 0)) * phraseGate;
+    const altWave = Math.cos(t * 1.9 + phase + (side < 0 ? 0.5 : 1.7)) * phraseGate;
 
     if (isWalk || isRun) {
-      const swing = Math.sin(gaitPhase + (side < 0 ? Math.PI : 0)) * (isRun ? 52 : 34);
+      const swing = Math.sin(gaitPhase + (side < 0 ? Math.PI : 0)) * (isRun ? 44 : 28);
       return {
-        x: shX + swing * facingSign + side * 8,
-        y: shY + 90 - Math.abs(swing) * 0.28,
-        bend: -facingSign,
+        x: shX + swing * facingSign + side * 6,
+        y: shY + 94 - Math.abs(swing) * 0.22,
+        hintX: -facingSign * 0.8,
+        hintY: 0.4,
       };
     }
 
     if (pose === 'wave' || gestureMode === 'celebrate') {
       if (side === 1) {
         return {
-          x: shX + 48 + Math.sin(t * 8.5) * 24,
-          y: torsoTop - 44 + Math.cos(t * 8.5) * 14,
-          bend: 1,
+          x: shX + 38 + Math.sin(t * 4.2) * 14 * blend,
+          y: torsoTop - 32 + Math.cos(t * 4.2) * 8 * blend,
+          hintX: 0.8,
+          hintY: 0.6,
         };
       }
       return {
-        x: shX - 18 + altWave * 14,
-        y: shY + 58 + talkWave * 12,
-        bend: -1,
+        x: shX + side * 6 + altWave * 6,
+        y: shY + 92 + talkWave * 5,
+        hintX: outX,
+        hintY: downY,
       };
     }
 
     if (pose === 'point' || gestureMode === 'argue') {
-      if (side === 1) {
-        const jab = Math.sin(t * 7.5 + phase) * 16;
+      if (side === facingSign) {
+        const emphasis = Math.sin(t * 3.1 + phase) * 12 * blend;
         return {
-          x: shX + facingSign * (80 + jab),
-          y: shY - 16 + Math.cos(t * 5.5) * 10,
-          bend: facingSign,
+          x: shX + facingSign * (68 + emphasis),
+          y: shY + 6 + Math.cos(t * 2.4) * 8,
+          hintX: facingSign * 0.2,
+          hintY: 1.0,
         };
       }
       return {
-        x: shX - facingSign * 14 + altWave * 12,
-        y: shY + 62 + talkWave * 14,
-        bend: -facingSign,
+        x: shX + side * 6 + altWave * 6,
+        y: shY + 90 + talkWave * 6,
+        hintX: outX,
+        hintY: downY,
       };
     }
 
     if (gestureMode === 'shock') {
       return {
-        x: side * 52 + Math.sin(t * 14 + side) * 6,
-        y: torsoTop - 42 + Math.cos(t * 14) * 6,
-        bend: side,
+        x: shX + side * 12 + Math.sin(t * 4.0 + side) * 4,
+        y: torsoTop - 16 + Math.cos(t * 4.0) * 4,
+        hintX: side * 0.95,
+        hintY: 0.5,
       };
     }
 
     if (pose === 'scratch-head' && side === 1) {
       return {
-        x: 56 + Math.sin(t * 7.5) * 8,
-        y: torsoTop - 86 + Math.cos(t * 7.5) * 7,
-        bend: 1,
+        x: 54 + Math.sin(t * 4.0) * 5,
+        y: torsoTop - 72 + Math.cos(t * 4.0) * 5,
+        hintX: 1.0,
+        hintY: 0.25,
       };
     }
 
     if (pose === 'think' || gestureMode === 'think-pace') {
       if (side === 1) {
         return {
-          x: 20 * facingSign + Math.sin(t * 3.2) * 5,
-          y: torsoTop - 22 + Math.cos(t * 3.2) * 4,
-          bend: facingSign,
+          x: 18 * facingSign + Math.sin(t * 1.8) * 3,
+          y: torsoTop - 14 + Math.cos(t * 1.8) * 3,
+          hintX: 0.9,
+          hintY: 0.5,
         };
       }
       return {
-        x: shX + side * 12 + talkWave * 12,
-        y: shY + 74 + altWave * 12,
-        bend: -side,
+        x: shX + side * 6 + talkWave * 6,
+        y: shY + 92 + altWave * 5,
+        hintX: outX,
+        hintY: downY,
       };
     }
 
     if (pose === 'read' || pose === 'type') {
-      const tap = pose === 'type' ? Math.sin(t * 18 + side * 2) * 10 : Math.sin(t * 2.8 + side) * 6;
+      const tap = pose === 'type' ? Math.sin(t * 8 + side * 2) * 4 : Math.sin(t * 1.8 + side) * 3;
       return {
-        x: side * 34 + facingSign * 16,
-        y: torsoTop + 86 + tap,
-        bend: side,
+        x: side * 26 + facingSign * 26,
+        y: shY + 52 + tap,
+        hintX: outX,
+        hintY: 0.85,
       };
     }
 
     if (pose === 'cradle' || gestureMode === 'cradle') {
-      const rock = Math.sin(t * 3.2) * 14;
+      const rock = Math.sin(t * 2.0) * 8;
       return {
-        x: side * 28 + rock,
-        y: torsoTop + 92 + Math.cos(t * 3.2) * 6,
-        bend: side,
+        x: side * 24 + rock + facingSign * 16,
+        y: shY + 54 + Math.cos(t * 2.0) * 4,
+        hintX: outX,
+        hintY: 0.85,
       };
     }
 
     if (pose === 'write' || gestureMode === 'work') {
       if (side === 1) {
         return {
-          x: 78 + Math.sin(t * 11) * 16,
-          y: torsoTop + 12 + Math.cos(t * 9) * 13,
-          bend: 1,
+          x: 68 + Math.sin(t * 5.0) * 10,
+          y: torsoTop + 18 + Math.cos(t * 4.4) * 8,
+          hintX: 0.9,
+          hintY: 0.55,
         };
       }
       return {
-        x: shX - 10 + altWave * 8,
-        y: shY + 68 + talkWave * 8,
-        bend: -1,
+        x: shX + side * 6,
+        y: shY + 90 + talkWave * 4,
+        hintX: outX,
+        hintY: downY,
       };
     }
 
     if (pose === 'violin' || gestureMode === 'violin') {
-      if (side === -1) return { x: -46, y: torsoTop + 14 + Math.sin(t * 3.5) * 4, bend: -1 };
+      if (side === -1) return { x: -44, y: torsoTop + 18 + Math.sin(t * 2.2) * 3, hintX: -0.7, hintY: 0.8 };
       return {
-        x: -10 + Math.sin(t * 7.8) * 32,
-        y: torsoTop + 34 + Math.cos(t * 7.8) * 10,
-        bend: 1,
+        x: -8 + Math.sin(t * 5.0) * 24,
+        y: torsoTop + 36 + Math.cos(t * 5.0) * 7,
+        hintX: 0.85,
+        hintY: 0.65,
       };
     }
 
     if (gestureMode === 'search' || pose === 'kneel') {
       if (side === 1) {
         return {
-          x: facingSign * 42 + Math.sin(t * 4) * 18,
-          y: torsoTop - 44 + Math.cos(t * 4) * 6,
-          bend: facingSign,
+          x: facingSign * 44 + Math.sin(t * 2.4) * 14,
+          y: torsoTop + 60 + Math.cos(t * 2.4) * 6,
+          hintX: outX,
+          hintY: downY,
         };
       }
       return {
-        x: shX + facingSign * 22,
-        y: shY + 84 + Math.sin(t * 4.5) * 10,
-        bend: facingSign,
+        x: shX + facingSign * 16,
+        y: shY + 88 + Math.sin(t * 2.4) * 6,
+        hintX: outX,
+        hintY: downY,
       };
     }
 
-    // Active natural conversational hands (open outward silhouettes — never stiff!)
-    const talkReach = 28 + excitement * 24;
-    if (side === facingSign) {
+    // Conversational mode: distinguish active speaker vs attentive listener!
+    if (isSpeaking) {
+      if (side === facingSign) {
+        return {
+          x: shX + facingSign * (24 + talkWave * 12),
+          y: shY + 48 - excitement * 10 + altWave * 10,
+          hintX: side * 0.7,
+          hintY: 0.85,
+        };
+      }
       return {
-        x: shX + facingSign * (34 + talkWave * 18),
-        y: shY + 42 - talkReach * 0.48 + altWave * 18,
-        bend: facingSign,
+        x: shX + side * 8 + altWave * 6,
+        y: shY + 88 + talkWave * 6,
+        hintX: outX,
+        hintY: downY,
       };
     }
+
+    // Calm attentive human listening posture (arms relaxed naturally near waist/hips)
     return {
-      x: shX - facingSign * (22 + Math.abs(altWave) * 10),
-      y: shY + 58 + talkWave * 16,
-      bend: -facingSign,
+      x: shX + side * 8 + Math.sin(t * 1.1 + side) * 4,
+      y: shY + 96 + Math.cos(t * 1.1 + side) * 3,
+      hintX: outX,
+      hintY: downY,
     };
   };
 
@@ -2105,7 +2255,7 @@ export function drawCharacter25D(
     const shX = side * (torsoW * 0.45);
     const shY = torsoTop + 28;
     const tgt = getHandTarget(side);
-    const ikArm = solveTwoBoneIK(shX, shY, tgt.x, tgt.y, 56, 54, tgt.bend);
+    const ikArm = solveTwoBoneIK(shX, shY, tgt.x, tgt.y, 49, 47, tgt.hintX, tgt.hintY);
     drawArticulatedLimb(
       ctx,
       shX,
@@ -2130,24 +2280,21 @@ export function drawCharacter25D(
   // Back arm drawn behind torso
   drawArmForSide(backSide);
 
-  // 2) VOLUMETRIC 2.5D TORSO
+  // 2) VOLUMETRIC TAILORED HUMAN TORSO (anatomical shoulders, natural waist & period attire)
   ctx.save();
   ctx.translate(0, torsoTop + torsoH * 0.5);
   ctx.scale(chestScaleX, chestScaleY);
   ctx.translate(0, -(torsoTop + torsoH * 0.5));
 
-  ctx.save();
-  ctx.translate(8, 10);
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.28)';
-  drawRoundedRectPath(ctx, -torsoW * 0.5, torsoTop, torsoW, torsoH, 34);
-  ctx.fill();
-  ctx.restore();
+  const shoulderW = torsoW * 0.52;
+  const waistW = app.outfitStyle === 'dress' ? torsoW * 0.36 : torsoW * 0.44;
+  const hemW = app.outfitStyle === 'dress' ? torsoW * 0.56 : torsoW * 0.47;
 
   const torsoGrad = makeClayLinear(
     ctx,
-    -torsoW * 0.5,
+    -shoulderW,
     torsoTop,
-    torsoW * 0.55,
+    shoulderW,
     torsoTop + torsoH,
     app.outfitHighlight,
     app.outfitColor,
@@ -2158,55 +2305,84 @@ export function drawCharacter25D(
     ctx,
     () => {
       ctx.beginPath();
-      ctx.moveTo(-torsoW * 0.42, torsoTop);
-      ctx.quadraticCurveTo(0, torsoTop - 16, torsoW * 0.42, torsoTop);
+      ctx.moveTo(-22, torsoTop - 4);
+      ctx.quadraticCurveTo(0, torsoTop - 14, 22, torsoTop - 4);
+      ctx.quadraticCurveTo(shoulderW, torsoTop + 6, shoulderW * 0.96, torsoTop + 34);
       ctx.bezierCurveTo(
-        torsoW * 0.58,
-        torsoTop + torsoH * 0.45,
-        torsoW * 0.54,
-        torsoTop + torsoH,
-        torsoW * 0.46,
+        waistW,
+        torsoTop + torsoH * 0.48,
+        hemW,
+        torsoTop + torsoH * 0.78,
+        hemW,
         torsoTop + torsoH
       );
-      ctx.lineTo(-torsoW * 0.46, torsoTop + torsoH);
+      ctx.lineTo(-hemW, torsoTop + torsoH);
       ctx.bezierCurveTo(
-        -torsoW * 0.54,
-        torsoTop + torsoH,
-        -torsoW * 0.58,
-        torsoTop + torsoH * 0.45,
-        -torsoW * 0.42,
-        torsoTop
+        -hemW,
+        torsoTop + torsoH * 0.78,
+        -waistW,
+        torsoTop + torsoH * 0.48,
+        -shoulderW * 0.96,
+        torsoTop + 34
       );
+      ctx.quadraticCurveTo(-shoulderW, torsoTop + 6, -22, torsoTop - 4);
       ctx.closePath();
     },
     torsoGrad,
     11
   );
 
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.28)';
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
   ctx.lineWidth = 4;
   ctx.lineCap = 'round';
   ctx.beginPath();
-  ctx.moveTo(-torsoW * 0.42, torsoTop + 26);
-  ctx.quadraticCurveTo(-torsoW * 0.36, torsoTop - 2, -6, torsoTop - 6);
+  ctx.moveTo(-shoulderW * 0.85, torsoTop + 26);
+  ctx.quadraticCurveTo(-shoulderW * 0.65, torsoTop, -8, torsoTop - 6);
   ctx.stroke();
 
-  if (app.outfitStyle === 'suit-tie' || app.outfitStyle === 'vest-shorts' || app.outfitStyle === 'lab-coat') {
+  if (app.outfitStyle === 'dress') {
+    // Elegant period waist sash + lace collar
     ctx.fillStyle = PALETTE.chalkWhite;
     ctx.beginPath();
-    ctx.moveTo(-22, torsoTop);
-    ctx.lineTo(0, torsoTop + 34);
-    ctx.lineTo(22, torsoTop);
+    ctx.moveTo(-20, torsoTop - 2);
+    ctx.quadraticCurveTo(0, torsoTop + 24, 20, torsoTop - 2);
     ctx.closePath();
     ctx.fill();
+    ctx.fillStyle = 'rgba(15, 23, 42, 0.35)';
+    ctx.fillRect(-waistW * 0.98, torsoTop + torsoH * 0.44, waistW * 1.96, 12);
+  } else if (app.outfitStyle === 'suit-tie' || app.outfitStyle === 'vest-shorts' || app.outfitStyle === 'lab-coat' || app.outfitStyle === 'jacket') {
+    // Shirt collar + jacket lapels + brass buttons
+    ctx.fillStyle = PALETTE.chalkWhite;
+    ctx.beginPath();
+    ctx.moveTo(-22, torsoTop - 2);
+    ctx.lineTo(0, torsoTop + 34);
+    ctx.lineTo(22, torsoTop - 2);
+    ctx.closePath();
+    ctx.fill();
+    // Jacket lapels
+    ctx.strokeStyle = app.outfitShadow;
+    ctx.lineWidth = 3.5;
+    ctx.beginPath();
+    ctx.moveTo(-24, torsoTop + 2);
+    ctx.lineTo(-10, torsoTop + 56);
+    ctx.moveTo(24, torsoTop + 2);
+    ctx.lineTo(10, torsoTop + 56);
+    ctx.stroke();
+    // Brass buttons
+    ctx.fillStyle = 'rgba(253, 224, 71, 0.72)';
+    for (const by of [torsoTop + 88, torsoTop + 116, torsoTop + 144]) {
+      ctx.beginPath();
+      ctx.arc(0, by, 3.8, 0, Math.PI * 2);
+      ctx.fill();
+    }
     if (app.outfitStyle === 'suit-tie') {
-      const tieSway = Math.sin(t * 3.4 + phase) * 4.5;
+      const tieSway = Math.sin(t * 2.2 + phase) * 3;
       ctx.fillStyle = effectiveSpec.id === 'albert-patent' ? PALETTE.notifPink : '#1E293B';
       ctx.beginPath();
       ctx.moveTo(-6, torsoTop + 26);
       ctx.lineTo(8, torsoTop + 26);
-      ctx.lineTo((effectiveSpec.id === 'albert-patent' ? 14 : 6) + tieSway, torsoTop + 88);
-      ctx.lineTo(-8 + tieSway, torsoTop + 88);
+      ctx.lineTo((effectiveSpec.id === 'albert-patent' ? 14 : 6) + tieSway, torsoTop + 86);
+      ctx.lineTo(-8 + tieSway, torsoTop + 86);
       ctx.closePath();
       ctx.fill();
     }
@@ -2572,7 +2748,12 @@ export function drawCharacter25D(
       ctx.arc(0, app.hairStyle === 'bun-high' ? -92 : -68, 30, 0, Math.PI * 2);
       ctx.fill();
       ctx.beginPath();
-      ctx.arc(0, -42, 68, Math.PI, 0);
+      ctx.arc(0, -40, 72, Math.PI * 0.94, Math.PI * 2.06);
+      ctx.fill();
+      // Soft side-temple locks framing face
+      ctx.beginPath();
+      ctx.ellipse(-66, -14, 13, 28, 0.14, 0, Math.PI * 2);
+      ctx.ellipse(66, -14, 13, 28, -0.14, 0, Math.PI * 2);
       ctx.fill();
     } else if (app.hairStyle === 'pith-helmet') {
       ctx.fillStyle = makeClayLinear(ctx, -76, -90, 76, -40, '#F7EEDB', '#E7D8B9', '#B5A179');
@@ -2599,7 +2780,12 @@ export function drawCharacter25D(
       ctx.fill();
     } else {
       ctx.beginPath();
-      ctx.arc(0, -44, 68, Math.PI, 0);
+      ctx.arc(0, -42, 72, Math.PI * 0.94, Math.PI * 2.06);
+      ctx.fill();
+      // Natural sideburns / temple hair framing forehead
+      ctx.beginPath();
+      ctx.ellipse(-66, -18, 11, 22, 0.1, 0, Math.PI * 2);
+      ctx.ellipse(66, -18, 11, 22, -0.1, 0, Math.PI * 2);
       ctx.fill();
     }
     ctx.restore();

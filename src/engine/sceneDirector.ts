@@ -202,7 +202,7 @@ function drawAnimatedChalkMotif(
   ctx.save();
   ctx.globalAlpha = Math.min(0.92, reveal * 1.15);
   ctx.font = '800 34px "JetBrains Mono", monospace';
-  const y = scene.splitScreen ? 405 : 315;
+  const y = scene.splitScreen ? 405 : 335;
   const fullText = scene.chalkMotif;
   const totalW = ctx.measureText(fullText).width;
   const startX = CANVAS_W / 2 - totalW / 2;
@@ -257,7 +257,50 @@ function drawAnimatedChalkMotif(
   ctx.restore();
 }
 
+function smoothstep(edge0: number, edge1: number, x: number): number {
+  const t = Math.max(0, Math.min(1, (x - edge0) / Math.max(0.001, edge1 - edge0)));
+  return t * t * (3 - 2 * t);
+}
+
+function getCharacterKeywords(id: SceneCharacterSpec['id']): RegExp {
+  if (id.startsWith('albert')) return /albert|bayi|ia\b|dirinya/;
+  const map: Record<string, RegExp> = {
+    pauline: /pauline|ibu|ibunya|keluarga/,
+    hermann: /hermann|ayah|ayahnya|keluarga/,
+    maja: /maja|adik/,
+    teacher: /guru|teacher/,
+    headmaster: /kepala sekolah/,
+    doctor: /dokter/,
+    'director-eth': /direktur/,
+    winteler: /winteler/,
+    mileva: /mileva/,
+    marcel: /marcel/,
+    solovine: /solovine/,
+    habicht: /habicht/,
+    besso: /besso/,
+    minkowski: /minkowski/,
+    weber: /weber/,
+    planck: /planck/,
+    eddington: /eddington/,
+    netijen: /netijen|kak netijen/,
+    elsa: /elsa/,
+    szilard: /szilard/,
+    meitner: /meitner/,
+    roosevelt: /roosevelt|presiden/,
+    hilbert: /hilbert/,
+    hubble: /hubble/,
+    'quantum-debater': /lawan|debat|bohr/,
+    'newton-ghost': /newton/,
+    jakob: /jakob|paman/,
+    talmey: /talmey/,
+    foton: /foton/,
+    kompas: /kompas/,
+  };
+  return map[id] ?? /siluet|astronom|atasan|hadirin/;
+}
+
 function computeCharacterActingState(
+  episodeId: number,
   scene: SceneData,
   charSpec: SceneCharacterSpec,
   visibleChars: SceneCharacterSpec[],
@@ -276,21 +319,33 @@ function computeCharacterActingState(
       torsoLean: 0,
       headYaw: 0,
       talkingActive: false,
+      isSpeaking: false,
       audioAmplitude: 0,
       excitement: 0.2,
+      poseBlend: 1,
     };
   }
 
   const beatText = `${activeBeat?.action ?? ''} ${activeBeat?.triggerWord ?? ''}`.toLowerCase();
-  const fullContext = `${beatText} ${scene.actingSummary}`.toLowerCase();
+  const beatIdx = Math.max(0, scene.timeline.indexOf(activeBeat as SceneBeat));
+  const beatElapsed = Math.max(0, scriptSec - (activeBeat?.startSec ?? 0));
+  const poseBlend = smoothstep(0, 0.48, beatElapsed);
+
   const appear = charSpec.appearFromSec ?? 0;
   const hide = charSpec.hideAfterSec ?? 16;
   const phase = charIdx * 1.85 + charSpec.slot.length * 0.7;
-  const beatIdx = Math.max(0, scene.timeline.indexOf(activeBeat as SceneBeat));
 
-  // Determine natural partner direction so characters interact with each other!
+  // Identify whether the active beat specifically directs THIS character vs another character
+  const myRegex = getCharacterKeywords(charSpec.id);
+  const beatMentionsMe = myRegex.test(beatText);
+  const otherMentions = visibleChars.some(
+    (other) => other !== charSpec && getCharacterKeywords(other.id).test(beatText)
+  );
+  const beatAppliesToMe = beatMentionsMe || !otherMentions || visibleChars.length === 1;
+
+  // Determine natural eye contact direction toward conversation partner
   const otherSlots = visibleChars.filter((c) => c !== charSpec).map((c) => c.slot);
-  let baseLookDir =
+  const baseLookDir =
     charSpec.facing === 'left'
       ? -1
       : charSpec.facing === 'right'
@@ -303,20 +358,18 @@ function computeCharacterActingState(
               ? -1
               : otherSlots.includes('right') && !otherSlots.includes('left')
                 ? 1
-                : Math.sin(effectiveTime * 0.9 + phase) >= 0
+                : Math.sin(effectiveTime * 0.55 + phase) >= 0
                   ? 1
                   : -1;
 
-  // Dynamic head turn between partner and audience (natural eye contact!)
+  // Natural human gaze: steady eye contact with partner, occasional smooth glance toward camera
+  const glanceToCam = Math.max(0, Math.sin(effectiveTime * 0.7 + phase));
   const headYaw = Math.max(
     -1,
-    Math.min(
-      1,
-      baseLookDir * 0.68 + Math.sin(effectiveTime * 1.45 + phase) * 0.34
-    )
+    Math.min(1, baseLookDir * (0.72 - glanceToCam * 0.35))
   );
 
-  // Determine beat-driven gesture & pose override while honoring explicit sleep/lie-down/float
+  // Respect scripted rest/activity poses
   const lockedRestPose =
     charSpec.pose === 'sleep' ||
     charSpec.pose === 'lie-down' ||
@@ -325,10 +378,14 @@ function computeCharacterActingState(
   let gestureMode: GestureMode = 'converse';
   let poseOverride: CharacterPose | undefined = undefined;
   let expressionOverride: SceneCharacterSpec['expression'] | undefined = undefined;
-  let excitement = 0.72 + Math.sin(effectiveTime * 2.1 + phase) * 0.16;
+  let excitement = 0.65;
 
-  const isEntering = charSpec.appearFromSec !== undefined && scriptSec - appear < 0.85;
-  const isExiting = charSpec.hideAfterSec !== undefined && hide - scriptSec < 0.65;
+  // Special Episode 1 Scene 1 realism: Newborn Albert sits tucked comfortably inside crib
+  const isEp1S1Newborn =
+    episodeId === 1 && scene.sceneNumber === 1 && charSpec.id === 'albert-baby';
+
+  const isEntering = charSpec.appearFromSec !== undefined && scriptSec - appear < 0.9;
+  const isExiting = charSpec.hideAfterSec !== undefined && hide - scriptSec < 0.7;
   const isKaget = Boolean(
     activeBeat &&
       (activeBeat.zoomKaget ||
@@ -336,149 +393,145 @@ function computeCharacterActingState(
         ZOOM_KAGET_REGEX.test(activeBeat.action))
   );
 
-  if (isEntering || isExiting) {
+  if (isEp1S1Newborn) {
+    poseOverride = 'sit';
+    gestureMode = isKaget ? 'shock' : 'celebrate';
+    excitement = 0.7;
+  } else if (isEntering || isExiting) {
     gestureMode = 'walk';
     if (!lockedRestPose && charSpec.pose !== 'sit' && charSpec.pose !== 'cradle') {
       poseOverride = 'walk';
     }
-    excitement = 0.85;
-  } else if (isKaget || /kaget|shock|panik|ambyar|meledak|terkejut|melotot/.test(beatText)) {
-    gestureMode = /lari|kabur|kejar/.test(beatText) ? 'run' : 'shock';
-    expressionOverride = /lari|kabur|panik/.test(beatText) ? 'panicked' : 'shocked';
-    excitement = 0.98;
-  } else if (/lari|kabur|kejar|bergegas/.test(beatText)) {
+    excitement = 0.78;
+  } else if (isKaget && beatAppliesToMe) {
+    gestureMode = /lari|kabur/.test(beatText) ? 'run' : 'shock';
+    expressionOverride = 'shocked';
+    excitement = 0.92;
+  } else if (beatAppliesToMe && /lari|kabur|kejar|bergegas/.test(beatText)) {
     gestureMode = 'run';
     if (!lockedRestPose) poseOverride = 'run';
-    excitement = 0.95;
-  } else if (/jalan|keluar|masuk|pindah|mondar|datang|berangkat/.test(beatText)) {
+    excitement = 0.9;
+  } else if (beatAppliesToMe && /jalan|keluar|masuk|mendaki|menjauh|melangkah/.test(beatText)) {
     gestureMode = 'walk';
     if (!lockedRestPose && charSpec.pose !== 'sit') poseOverride = 'walk';
-    excitement = 0.82;
-  } else if (/biola|gesek|musik/.test(beatText) || charSpec.pose === 'violin') {
+    excitement = 0.78;
+  } else if (charSpec.pose === 'violin' || (beatAppliesToMe && /biola|gesek/.test(beatText))) {
     gestureMode = 'violin';
     poseOverride = 'violin';
-    excitement = 0.86;
-  } else if (/gendong|timang|ayun|bayi/.test(beatText) || charSpec.pose === 'cradle') {
+    excitement = 0.82;
+  } else if (charSpec.pose === 'cradle' || (beatAppliesToMe && /gendong|timang/.test(beatText))) {
     gestureMode = 'cradle';
     if (!lockedRestPose) poseOverride = 'cradle';
-    excitement = 0.78;
-  } else if (/tulis|coret|hitung|rumus|papan/.test(beatText) || charSpec.pose === 'write') {
+    excitement = 0.74;
+  } else if (charSpec.pose === 'write' || (beatAppliesToMe && /tulis|coret|tanda tangan/.test(beatText))) {
     gestureMode = 'work';
     if (!lockedRestPose && charSpec.pose !== 'sit') poseOverride = 'write';
-    excitement = 0.88;
-  } else if (/ketik|ngetik|komputer|scroll|hp|chat/.test(beatText) || charSpec.pose === 'type') {
+    excitement = 0.8;
+  } else if (charSpec.pose === 'type' || (beatAppliesToMe && /ketik|ngetik|ponsel/.test(beatText))) {
     gestureMode = 'work';
     if (!lockedRestPose) poseOverride = 'type';
-    excitement = 0.86;
-  } else if (/ngolong|cari|intip|merangkak|meja/.test(beatText) || charSpec.pose === 'kneel') {
+    excitement = 0.78;
+  } else if (charSpec.pose === 'kneel' || (beatAppliesToMe && /ngolong|cari|sujud/.test(beatText))) {
     gestureMode = 'search';
     if (!lockedRestPose && charSpec.pose !== 'sit') poseOverride = 'kneel';
-    excitement = 0.85;
-  } else if (/garuk|pusing|bingung/.test(beatText) || charSpec.pose === 'scratch-head') {
+    excitement = 0.8;
+  } else if (charSpec.pose === 'scratch-head' || (beatAppliesToMe && /garuk|kikuk|pusing/.test(beatText))) {
     gestureMode = 'think-pace';
     if (!lockedRestPose && charSpec.pose !== 'sit') poseOverride = 'scratch-head';
-    excitement = 0.76;
-  } else if (/mikir|renung|pikir|kompas/.test(beatText) || charSpec.pose === 'think') {
+    excitement = 0.72;
+  } else if (charSpec.pose === 'think' || (beatAppliesToMe && /mikir|renung|amati/.test(beatText))) {
     gestureMode = 'think-pace';
     if (!lockedRestPose && charSpec.pose !== 'sit') poseOverride = 'think';
-    excitement = 0.74;
-  } else if (/marah|bentak|debat|tuding|tunjuk|serang|bantah|protes|emosi/.test(beatText) || charSpec.pose === 'point') {
+    excitement = 0.7;
+  } else if (charSpec.pose === 'point' || (beatAppliesToMe && /marah|gebrak|tunjuk|debat|bantah|protes/.test(beatText))) {
     gestureMode = 'argue';
     if (!lockedRestPose && charSpec.pose !== 'sit') poseOverride = 'point';
-    excitement = 0.92;
-  } else if (/tertawa|senang|sorak|lulus|menang|tepuk|tepuk tangan|lambai|melet/.test(beatText) || charSpec.pose === 'wave') {
+    excitement = 0.86;
+  } else if (charSpec.pose === 'wave' || (beatAppliesToMe && /lambai|sorak|senang|tertawa|selfie/.test(beatText))) {
     gestureMode = 'celebrate';
     if (!lockedRestPose && charSpec.pose !== 'sit') poseOverride = 'wave';
-    excitement = 0.9;
-  } else if (!lockedRestPose && charSpec.pose !== 'sit' && charSpec.pose !== 'read') {
-    // Rotate lively everyday acting habits across beats so characters never stand frozen
-    const beatRoleCycle = (beatIdx + charIdx) % 4;
-    if (beatRoleCycle === 1 && visibleChars.length > 1) {
-      gestureMode = charIdx === 0 ? 'argue' : 'converse';
-    } else if (beatRoleCycle === 2) {
-      gestureMode = /bengong|diam/.test(fullContext) ? 'think-pace' : 'converse';
-    } else if (beatRoleCycle === 3) {
-      gestureMode = visibleChars.length === 1 ? 'walk' : 'celebrate';
-      if (visibleChars.length === 1) poseOverride = 'walk';
-    } else {
-      gestureMode = 'converse';
-    }
+    excitement = 0.84;
+  } else if (charSpec.pose === 'read') {
+    gestureMode = 'converse';
+    poseOverride = 'read';
+    excitement = 0.65;
+  } else if (charSpec.pose === 'sit') {
+    gestureMode = 'converse';
+    poseOverride = 'sit';
+    excitement = 0.65;
   }
 
-  // Stage Blocking / Walking Offset (kept safely inside canvas margins so characters never collide)
+  // Grounded Stage Blocking: ONLY translate walkOffsetX when genuinely walking/running/entering/exiting!
   let walkOffsetX = 0;
+  let walkPhase: number | undefined = undefined;
   const maxStep =
     visibleChars.length <= 1
-      ? 85
+      ? 68
       : visibleChars.length === 2 && !visibleChars.some((c) => c.slot === 'center')
-        ? 54
-        : 32;
+        ? 44
+        : 24;
 
   if (isEntering) {
-    const enterP = Math.max(0, 1 - (scriptSec - appear) / 0.85);
+    const enterP = 1 - smoothstep(0, 0.9, scriptSec - appear);
     const enterDir = charSpec.slot === 'right' ? 1 : -1;
-    walkOffsetX = enterDir * enterP * 115;
+    walkOffsetX = enterDir * enterP * 110;
+    walkPhase = (scriptSec - appear) * 6.4;
   } else if (isExiting) {
-    const exitP = Math.max(0, 1 - (hide - scriptSec) / 0.65);
+    const exitP = smoothstep(0, 0.7, scriptSec - (hide - 0.7));
     const exitDir = charSpec.slot === 'right' ? 1 : -1;
-    walkOffsetX = exitDir * exitP * 115;
-  } else if (!lockedRestPose && charSpec.pose !== 'sit' && charSpec.pose !== 'kneel') {
-    if (gestureMode === 'run') {
-      walkOffsetX = Math.sin(effectiveTime * 3.1 + phase) * maxStep;
-    } else if (gestureMode === 'walk' || gestureMode === 'think-pace') {
-      walkOffsetX = Math.sin(effectiveTime * 1.35 + phase) * maxStep;
-    } else if (gestureMode === 'argue') {
-      // Lean/step toward partner dynamically while making points
-      walkOffsetX = baseLookDir * (8 + Math.max(0, Math.sin(effectiveTime * 2.4 + phase)) * (maxStep * 0.52));
-    } else if (gestureMode === 'cradle') {
-      walkOffsetX = Math.sin(effectiveTime * 1.9 + phase) * 18;
-    } else {
-      // Subtle continuous Weight-Shift blocking even during lively dialogue
-      walkOffsetX = Math.sin(effectiveTime * 1.1 + phase) * (maxStep * 0.42);
-    }
+    walkOffsetX = exitDir * exitP * 110;
+    walkPhase = scriptSec * 6.4;
+  } else if ((gestureMode === 'walk' || gestureMode === 'run') && !lockedRestPose && charSpec.pose !== 'sit') {
+    const speed = gestureMode === 'run' ? 2.4 : 1.05;
+    walkOffsetX = Math.sin(effectiveTime * speed + phase) * maxStep * poseBlend;
+    // Lock gait leg cycle directly to direction & travel velocity!
+    walkPhase = effectiveTime * (gestureMode === 'run' ? 9.5 : 5.6) + phase;
   }
 
-  // Spring Hop / Comedic Jump on Zoom-Kaget, Shock, Celebration, or Excited Speech
+  // Realistic Single-Impulse Hop on Zoom-Kaget ONLY (never pogo-sticking!)
   let hopY = 0;
-  if (isKaget && activeBeat) {
-    const dt = scriptSec - activeBeat.startSec;
-    if (dt >= 0 && dt <= 0.55) {
-      hopY = -Math.sin((dt / 0.55) * Math.PI) * 34;
+  if (isKaget && activeBeat && beatAppliesToMe && !lockedRestPose && !isEp1S1Newborn && charSpec.pose !== 'sit') {
+    if (beatElapsed >= 0 && beatElapsed <= 0.42) {
+      hopY = -Math.sin((beatElapsed / 0.42) * Math.PI) * 24;
     }
-  } else if (gestureMode === 'celebrate' && !lockedRestPose && charSpec.pose !== 'sit') {
-    hopY = -Math.abs(Math.sin(effectiveTime * 5.2 + phase)) * 14;
-  } else if (gestureMode === 'shock' && !lockedRestPose) {
-    hopY = -Math.abs(Math.sin(effectiveTime * 7.5 + phase)) * 10;
   }
 
-  // Dynamic Torso Lean (engaged lean forward when arguing/conversing, lean back when shocked)
+  // Conversational Turn-Taking: only active speaker/named actor raises hands & speaks; others listen attentively!
+  const isSpeaking =
+    Boolean(charSpec.quoteBubble) ||
+    (beatMentionsMe && !otherMentions) ||
+    (!beatMentionsMe && !otherMentions && (visibleChars.length === 1 || beatIdx % visibleChars.length === charIdx));
+
+  // Subtle Natural Human Torso Lean
   const torsoLean =
     gestureMode === 'shock'
-      ? -baseLookDir * 0.1
+      ? -baseLookDir * 0.08 * poseBlend
       : gestureMode === 'argue'
-        ? baseLookDir * (0.09 + Math.sin(effectiveTime * 4.5 + phase) * 0.04)
+        ? baseLookDir * 0.075 * poseBlend
         : gestureMode === 'work' || gestureMode === 'search'
-          ? baseLookDir * 0.08
-          : Math.sin(effectiveTime * 2.1 + phase) * 0.05;
+          ? baseLookDir * 0.065 * poseBlend
+          : isSpeaking
+            ? baseLookDir * 0.035 * poseBlend
+            : 0;
 
-  // Determine who is actively speaking / reacting
-  const hasQuote = Boolean(charSpec.quoteBubble);
   const talkingActive =
-    hasQuote ||
-    (audioAmplitude > 0.08 &&
-      (visibleChars.length === 1 || beatIdx % visibleChars.length === charIdx));
+    Boolean(charSpec.quoteBubble) ||
+    (audioAmplitude > 0.08 && isSpeaking && gestureMode !== 'violin' && !isEp1S1Newborn);
 
   return {
     poseOverride,
     expressionOverride,
     gestureMode,
     walkOffsetX,
+    walkPhase,
     hopY,
     torsoLean,
     headYaw,
     talkingActive,
-    audioAmplitude: Math.max(audioAmplitude, talkingActive ? 0.55 : 0.15),
-    excitement: Math.max(0.55, Math.min(1, excitement)),
+    isSpeaking,
+    audioAmplitude: Math.max(audioAmplitude, talkingActive ? 0.48 : 0.12),
+    excitement: Math.max(0.5, Math.min(1, excitement)),
+    poseBlend,
   };
 }
 
@@ -579,6 +632,7 @@ export function renderStudioFrame(
       : charSpec.scale ?? 1;
 
     const acting = computeCharacterActingState(
+      episode.id,
       scene,
       charSpec,
       visibleChars,
@@ -590,15 +644,32 @@ export function renderStudioFrame(
       isSilentFreeze
     );
 
-    const slotX = SLOT_X[charSpec.slot];
+    const isEp1S1Newborn =
+      episode.id === 1 && scene.sceneNumber === 1 && charSpec.id === 'albert-baby';
+    const isEp1S1Pauline =
+      episode.id === 1 && scene.sceneNumber === 1 && charSpec.id === 'pauline';
+    const isEthNetijen =
+      scene.backgroundVariant === 'administrasi-eth' &&
+      charSpec.id === 'netijen' &&
+      (charSpec.yOffset ?? 0) < -200;
+
+    const slotX = SLOT_X[charSpec.slot] + (isEthNetijen ? 95 : 0);
     drawCharacter25D(
       ctx,
-      { ...charSpec, scale: dynamicScale },
+      {
+        ...charSpec,
+        prop: isEp1S1Pauline ? undefined : charSpec.prop,
+        pose: isEp1S1Pauline ? 'stand' : charSpec.pose,
+        scale: dynamicScale,
+        yOffset: isEp1S1Newborn ? -38 : isEthNetijen ? -60 : charSpec.yOffset,
+      },
       slotX,
       FLOOR_Y,
       effectiveTime,
       isSilentFreeze,
-      acting
+      isEp1S1Pauline
+        ? { ...acting, poseOverride: 'stand', gestureMode: 'converse', isSpeaking: true }
+        : acting
     );
   }
 

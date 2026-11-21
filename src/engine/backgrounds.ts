@@ -460,15 +460,33 @@ function renderL01(ctx: CanvasRenderingContext2D, info: BgRenderContext) {
     drawLampGlow(ctx, 540, 360, 380, 0.34);
     drawBrassChandelier(ctx, 540, 310);
 
-    // Grand mahogany piano right
+    // Grand mahogany upright piano right with music stand & sheet music
     ctx.fillStyle = '#2A140B';
-    drawRoundedRectPath(ctx, 825, 1020, 225, 330, 12);
+    drawRoundedRectPath(ctx, 825, 1000, 235, 350, 12);
     ctx.fill();
+    ctx.fillStyle = '#F5F5F0';
+    ctx.fillRect(855, 1020, 110, 62);
     ctx.fillStyle = '#FEF9C3';
     ctx.fillRect(835, 1140, 180, 24);
+    ctx.fillStyle = '#1E293B';
+    for (let k = 842; k < 1005; k += 18) {
+      ctx.fillRect(k, 1140, 8, 14);
+    }
 
-    // Ornate dining table
-    drawWoodenTable(ctx, 180, 1185, 670, 165, '#FDE68A');
+    // Ornate dining table with warm ceramic plates & flickering brass candlestick
+    drawWoodenTable(ctx, 180, 1185, 650, 165, '#FDE68A');
+    for (const px of [310, 505, 680]) {
+      ctx.fillStyle = '#F8FAFC';
+      ctx.beginPath();
+      ctx.ellipse(px, 1184, 34, 9, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.fillStyle = '#D97706';
+    ctx.fillRect(512, 1140, 14, 42);
+    ctx.fillStyle = '#FEF08A';
+    ctx.beginPath();
+    ctx.ellipse(519, 1130 + Math.sin(info.timeSec * 8) * 2, 7, 12, 0, 0, Math.PI * 2);
+    ctx.fill();
   } else if (v === 'kamar-anak') {
     // Cheerful sky-blue & buttercream 1880s kids bedroom
     drawVintageRoomBase(ctx, {
@@ -566,6 +584,29 @@ function renderL01(ctx: CanvasRenderingContext2D, info: BgRenderContext) {
       curtainColor: '#991B1B',
       timeSec: info.timeSec,
     });
+    // Wall chalkboard with glowing Euclid triangles & calculus curve
+    ctx.fillStyle = '#78350F';
+    ctx.fillRect(140, 410, 520, 320);
+    ctx.fillStyle = '#14532D';
+    ctx.fillRect(154, 424, 492, 292);
+    ctx.strokeStyle = PALETTE.einsteinYellow;
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(210, 640);
+    ctx.lineTo(350, 640);
+    ctx.lineTo(210, 490);
+    ctx.closePath();
+    ctx.stroke();
+    ctx.strokeStyle = '#38BDF8';
+    ctx.beginPath();
+    ctx.moveTo(410, 640);
+    ctx.quadraticCurveTo(490, 470, 595, 520);
+    ctx.stroke();
+    ctx.fillStyle = 'rgba(254, 240, 138, 0.85)';
+    ctx.font = '700 24px "JetBrains Mono", monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText('a² + b² = c²   ∫ y dx', 210, 685);
+
     drawLampGlow(ctx, 320, 1020, 380, 0.36);
     drawWoodenTable(ctx, 190, 1170, 680, 180);
     // Green banker's lamp on desk
@@ -994,14 +1035,36 @@ function renderL04(ctx: CanvasRenderingContext2D, info: BgRenderContext) {
     ctx.fillStyle = '#1E293B';
     ctx.font = '800 30px "Plus Jakarta Sans", sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('HASIL UJIAN MASUK ETH ZURICH', 540, 500);
-    ctx.strokeStyle = 'rgba(30, 41, 59, 0.25)';
-    ctx.lineWidth = 3;
-    for (let ly = 550; ly < 810; ly += 55) {
+    ctx.fillText('HASIL UJIAN MASUK ETH ZURICH', 540, 494);
+
+    // Golden glowing Math & Physics cards (left) vs smoky French & Biology cards (right)
+    drawLampGlow(ctx, 380, 660, 190, 0.38);
+    ctx.fillStyle = '#FEF08A';
+    drawRoundedRectPath(ctx, 265, 540, 250, 115, 12);
+    ctx.fill();
+    ctx.fillStyle = '#FDE047';
+    drawRoundedRectPath(ctx, 265, 675, 250, 115, 12);
+    ctx.fill();
+    ctx.fillStyle = '#14532D';
+    ctx.font = '800 24px "Plus Jakarta Sans", sans-serif';
+    ctx.fillText('MATEMATIKA: 6 ★', 390, 605);
+    ctx.fillText('FISIKA: 6 ★', 390, 740);
+
+    ctx.fillStyle = '#94A3B8';
+    drawRoundedRectPath(ctx, 565, 540, 250, 115, 12);
+    ctx.fill();
+    drawRoundedRectPath(ctx, 565, 675, 250, 115, 12);
+    ctx.fill();
+    ctx.fillStyle = '#1E293B';
+    ctx.fillText('PRANCIS: 3 ☁', 690, 605);
+    ctx.fillText('BIOLOGI: 3 ☁', 690, 740);
+    // Animated smoke puffs rising from failed non-STEM subjects
+    ctx.fillStyle = 'rgba(148, 163, 184, 0.45)';
+    for (let s = 0; s < 3; s++) {
+      const sy = 528 - ((info.timeSec * 28 + s * 22) % 64);
       ctx.beginPath();
-      ctx.moveTo(280, ly);
-      ctx.lineTo(800, ly);
-      ctx.stroke();
+      ctx.arc(690 + Math.sin(info.timeSec * 3 + s) * 14, sy, 12 + s * 3, 0, Math.PI * 2);
+      ctx.fill();
     }
   } else if (v === 'ruang-direktur-eth' || v === 'ruang-dosen-eth') {
     drawVintageRoomBase(ctx, {
@@ -1028,7 +1091,7 @@ function renderL04(ctx: CanvasRenderingContext2D, info: BgRenderContext) {
     ctx.arc(792, 1075, 22, 0, Math.PI * 1.4);
     ctx.fill();
   } else {
-    // Ruang Kuliah ETH (Walnut auditorium + emerald blackboard)
+    // Ruang Kuliah ETH (Walnut auditorium + emerald blackboard + sunlit campus window + 5 benches)
     drawVintageRoomBase(ctx, {
       wallTop: '#2E3A4D',
       wallBottom: '#3D4E68',
@@ -1038,15 +1101,24 @@ function renderL04(ctx: CanvasRenderingContext2D, info: BgRenderContext) {
       floorTop: '#784421',
       floorBottom: '#3E200F',
     });
+    drawVintageWindow(ctx, 68, 360, 155, 290, {
+      sun: true,
+      curtainColor: '#991B1B',
+      timeSec: info.timeSec,
+    });
     ctx.fillStyle = '#78350F';
-    ctx.fillRect(126, 406, 828, 408);
+    ctx.fillRect(256, 406, 738, 388);
     ctx.fillStyle = '#14532D';
-    ctx.fillRect(140, 420, 800, 380);
-    ctx.fillStyle = 'rgba(254, 240, 138, 0.72)';
-    ctx.font = '700 32px "JetBrains Mono", monospace';
+    ctx.fillRect(270, 420, 710, 360);
+    ctx.fillStyle = 'rgba(254, 240, 138, 0.8)';
+    ctx.font = '700 30px "JetBrains Mono", monospace';
     ctx.textAlign = 'left';
-    ctx.fillText('1896', 175, 475);
-    ctx.fillText('∫ F·dr = ΔE   ∇²φ = 4πGρ', 210, 620);
+    ctx.fillText('1896 — ETH ZURICH', 305, 475);
+    ctx.fillText('∫ F·dr = ΔE   ∇²φ = 4πGρ', 305, 610);
+    // Tiered student oak benches
+    for (let b = 0; b < 3; b++) {
+      drawWoodenTable(ctx, 135 + b * 290, 1190, 230, 160);
+    }
   }
 }
 
@@ -1563,8 +1635,8 @@ function renderL08(ctx: CanvasRenderingContext2D, info: BgRenderContext) {
   ctx.closePath();
   ctx.fill();
 
-  drawLampGlow(ctx, 540, 340, 420, 0.34);
-  drawBrassChandelier(ctx, 540, 280);
+  drawLampGlow(ctx, 540, 260, 420, 0.34);
+  drawBrassChandelier(ctx, 540, 215);
 
   if (info.variant === 'ruang-oval') {
     drawWoodenTable(ctx, 220, 1140, 640, 210);
@@ -1577,6 +1649,30 @@ function renderL08(ctx: CanvasRenderingContext2D, info: BgRenderContext) {
     }
     ctx.fillStyle = '#1D4ED8';
     ctx.fillRect(880, 640, 58, 105);
+  } else if (info.variant === 'akademi-prusia') {
+    // Prussian Academy Hall with November 1915 4-Thursday calendar!
+    ctx.fillStyle = '#FEF3C7';
+    drawRoundedRectPath(ctx, 260, 420, 560, 260, 18);
+    ctx.fill();
+    ctx.strokeStyle = '#78350F';
+    ctx.lineWidth = 6;
+    ctx.stroke();
+    ctx.fillStyle = '#991B1B';
+    ctx.fillRect(263, 423, 554, 62);
+    ctx.fillStyle = '#FEF3C7';
+    ctx.font = '800 28px "Plus Jakarta Sans", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('NOVEMBER 1915 · 4 KAMIS', 540, 462);
+    const activeThu = Math.min(3, Math.floor(info.sceneProgress * 4));
+    for (let k = 0; k < 4; k++) {
+      const kx = 320 + k * 145;
+      ctx.fillStyle = k <= activeThu ? '#FACC15' : '#E2E8F0';
+      drawRoundedRectPath(ctx, kx - 48, 520, 96, 110, 12);
+      ctx.fill();
+      ctx.fillStyle = '#0F172A';
+      ctx.font = '800 32px "JetBrains Mono", monospace';
+      ctx.fillText(`${4 + k * 7}`, kx, 578);
+    }
   } else {
     ctx.fillStyle = '#5C3018';
     ctx.fillRect(420, 1090, 240, 260);
@@ -1689,8 +1785,55 @@ function renderL09(ctx: CanvasRenderingContext2D, info: BgRenderContext) {
         ctx.stroke();
       }
     }
+  } else if (v === 'peta-eropa') {
+    // Central Europe Vintage Map (Zurich -> Praha -> Berlin glowing golden career arc)
+    ctx.fillStyle = '#1E3A5F';
+    ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
+    ctx.fillStyle = '#EFE1C4';
+    drawRoundedRectPath(ctx, 46, 260, CANVAS_W - 92, CANVAS_H - 520, 28);
+    ctx.fill();
+    ctx.strokeStyle = '#78350F';
+    ctx.lineWidth = 8;
+    ctx.stroke();
+
+    ctx.fillStyle = '#84CC16';
+    drawRoundedRectPath(ctx, 130, 560, 270, 360, 44);
+    ctx.fill();
+    ctx.fillStyle = '#EAB308';
+    drawRoundedRectPath(ctx, 420, 480, 290, 420, 44);
+    ctx.fill();
+    ctx.fillStyle = '#16A34A';
+    drawRoundedRectPath(ctx, 640, 410, 290, 480, 44);
+    ctx.fill();
+
+    ctx.strokeStyle = '#DC2626';
+    ctx.lineWidth = 6;
+    ctx.setLineDash([12, 10]);
+    ctx.beginPath();
+    ctx.moveTo(270, 740);
+    ctx.lineTo(540, 620);
+    ctx.lineTo(790, 480);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    for (const [cx, cy, label] of [
+      [270, 740, 'ZURICH'],
+      [540, 620, 'PRAHA'],
+      [790, 480, 'BERLIN'],
+    ] as const) {
+      ctx.fillStyle = PALETTE.einsteinYellow;
+      ctx.beginPath();
+      ctx.arc(cx, cy, 18, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#78350F';
+      ctx.lineWidth = 4;
+      ctx.stroke();
+      ctx.fillStyle = '#1E293B';
+      ctx.font = '800 22px "Plus Jakarta Sans", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(label, cx, cy - 28);
+    }
   } else {
-    // Rich Antique Sepia Parchment Cartography Map!
+    // Rich Antique Sepia Parchment Cartography Map (London -> Principe & Sobral)
     ctx.fillStyle = '#1E3A5F';
     ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
     ctx.fillStyle = '#E7D3AD';
@@ -1699,6 +1842,16 @@ function renderL09(ctx: CanvasRenderingContext2D, info: BgRenderContext) {
     ctx.strokeStyle = '#78350F';
     ctx.lineWidth = 8;
     ctx.stroke();
+
+    // Longitude/latitude vintage lines
+    ctx.strokeStyle = 'rgba(120, 53, 15, 0.14)';
+    ctx.lineWidth = 2;
+    for (let gx = 160; gx < 960; gx += 130) {
+      ctx.beginPath();
+      ctx.moveTo(gx, 280);
+      ctx.lineTo(gx, 1620);
+      ctx.stroke();
+    }
 
     // Stylized emerald & ochre antique continents
     ctx.fillStyle = '#65A30D';

@@ -51,19 +51,32 @@ async function pickSupportedVideoCodec(
   return null;
 }
 
-async function isAacSupported(sampleRate: number): Promise<boolean> {
-  if (typeof AudioEncoder === 'undefined') return false;
-  try {
-    const res = await AudioEncoder.isConfigSupported({
-      codec: 'mp4a.40.2',
-      sampleRate,
-      numberOfChannels: 2,
-      bitrate: 192_000,
-    });
-    return Boolean(res.supported);
-  } catch {
-    return false;
+interface AudioCodecChoice {
+  webCodecs: string;
+  muxer: 'aac' | 'opus';
+  chunkSamples: number;
+}
+
+async function pickSupportedAudioCodec(sampleRate: number): Promise<AudioCodecChoice | null> {
+  if (typeof AudioEncoder === 'undefined') return null;
+  const candidates: AudioCodecChoice[] = [
+    { webCodecs: 'mp4a.40.2', muxer: 'aac', chunkSamples: 1024 },
+    { webCodecs: 'opus', muxer: 'opus', chunkSamples: Math.round(sampleRate * 0.02) },
+  ];
+  for (const c of candidates) {
+    try {
+      const res = await AudioEncoder.isConfigSupported({
+        codec: c.webCodecs,
+        sampleRate,
+        numberOfChannels: 2,
+        bitrate: 192_000,
+      });
+      if (res.supported) return c;
+    } catch {
+      // try next audio codec
+    }
   }
+  return null;
 }
 
 export async function exportRealMp4Video(
@@ -96,9 +109,9 @@ export async function exportRealMp4Video(
   const baseFileName = `Einstein_${epTag}_${sceneTag}_1080x1920`;
 
   const videoCodec = await pickSupportedVideoCodec(CANVAS_W, CANVAS_H, fps);
-  const aacOk = await isAacSupported(mixed.buffer.sampleRate);
+  const audioCodec = await pickSupportedAudioCodec(mixed.buffer.sampleRate);
 
-  if (videoCodec && aacOk) {
+  if (videoCodec && audioCodec) {
     return exportViaWebCodecsMp4({
       episode,
       sceneDurations,
@@ -110,6 +123,7 @@ export async function exportRealMp4Video(
       mixedBuffer: mixed.buffer,
       peaks: mixed.peaks,
       videoCodec,
+      audioCodec,
       fileName: `${baseFileName}.mp4`,
       onProgress,
     });
@@ -141,6 +155,7 @@ async function exportViaWebCodecsMp4(params: {
   mixedBuffer: AudioBuffer;
   peaks: number[];
   videoCodec: string;
+  audioCodec: AudioCodecChoice;
   fileName: string;
   onProgress: (pct: number, label: string) => void;
 }): Promise<ExportMp4Result> {
@@ -155,6 +170,7 @@ async function exportViaWebCodecsMp4(params: {
     mixedBuffer,
     peaks,
     videoCodec,
+    audioCodec,
     fileName,
     onProgress,
   } = params;
@@ -168,7 +184,7 @@ async function exportViaWebCodecsMp4(params: {
       height: CANVAS_H,
     },
     audio: {
-      codec: 'aac',
+      codec: audioCodec.muxer,
       numberOfChannels: 2,
       sampleRate: mixedBuffer.sampleRate,
     },
@@ -204,21 +220,21 @@ async function exportViaWebCodecsMp4(params: {
   });
 
   audioEncoder.configure({
-    codec: 'mp4a.40.2',
+    codec: audioCodec.webCodecs,
     sampleRate: mixedBuffer.sampleRate,
     numberOfChannels: 2,
     bitrate: 192_000,
   });
 
-  // 1. Encode AudioBuffer in 1024-frame planar chunks
-  onProgress(8, 'Mengenkode trek audio AAC 48kHz…');
+  // 1. Encode AudioBuffer in fixed frames (1024 for AAC, 960 for Opus)
+  onProgress(8, `Mengenkode trek audio ${audioCodec.muxer.toUpperCase()} 48kHz…`);
   const chLeft = mixedBuffer.getChannelData(0);
   const chRight =
     mixedBuffer.numberOfChannels > 1
       ? mixedBuffer.getChannelData(1)
       : chLeft;
   const totalSamples = mixedBuffer.length;
-  const chunkSamples = 1024;
+  const chunkSamples = audioCodec.chunkSamples;
 
   for (let offset = 0; offset < totalSamples; offset += chunkSamples) {
     if (encoderError) throw encoderError;
